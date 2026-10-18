@@ -1,0 +1,19 @@
+# Dependencias y artefactos generados
+node_modules/
+__pycache__/
+*.pyc
+
+# Archivos de trabajo locales
+*.log
+
+# Pruebas ofimaticas: scripts de build (las salidas .docx/.pptx si se versionan)
+salidas/ofimatica/build_*
+salidas/ofimatica/verificar.py
+
+# Carpeta smokes: scripts de validacion locales
+smokes/
+# Bloqueo de binarios en el harness Antigravity
+*.bin
+*.exe
+*.dll
+
