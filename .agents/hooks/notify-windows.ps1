@@ -1,4 +1,4 @@
-# Notificador nativo WinRT Toast para Lifecycle Hooks de Antigravity (fuente ASCII, sin BOM)
+# Notificador nativo WinRT Toast y eventos sonoros para Lifecycle Hooks de Antigravity (fuente ASCII, sin BOM)
 param(
     [ValidateSet("Stop", "PreToolUse")]
     [string]$Event = "Stop",
@@ -47,9 +47,36 @@ public class Win32Focus {
     }
 }
 
-# Construye y dispara la notificacion Toast de Windows con el audio nativo especificado si la terminal no esta en foco
-function Send-WindowsToast([string]$Title, [string]$Body, [string]$AudioUri) {
-    if (Test-TerminalFocused) { return }
+# Reproduce el sonido acustico de evento configurado en Windows para alertar al usuario sin saturar la pantalla
+function Play-WindowsSoundEvent([string]$EventName = "Notification.Default") {
+    try {
+        $regPath = "HKCU:\AppEvents\Schemes\Apps\.Default\$EventName\.Current"
+        $wavPath = (Get-ItemProperty -Path $regPath -ErrorAction Stop).'(default)'
+        if ($wavPath -and (Test-Path -LiteralPath $wavPath)) {
+            $player = [System.Media.SoundPlayer]::new($wavPath)
+            $player.PlaySync()
+            return
+        }
+    } catch { }
+
+    # Fallback si falla la lectura del registro o el archivo WAV no existe
+    try {
+        if ($EventName -match 'Reminder|Exclamation') {
+            [System.Media.SystemSounds]::Exclamation.Play()
+        } else {
+            [System.Media.SystemSounds]::Asterisk.Play()
+        }
+    } catch { }
+}
+
+# Dispara notificacion visual Toast si la terminal no esta en foco, o reproduce sonido acustico si ya esta en foco
+function Send-WindowsNotification([string]$Title, [string]$Body, [string]$SoundEvent = "Notification.Default") {
+    # Si el usuario ya esta en una terminal (ej. en otra pestana de Windows Terminal), suprimimos el banner visual pero SI sonamos
+    if (Test-TerminalFocused) {
+        Play-WindowsSoundEvent -EventName $SoundEvent
+        return
+    }
+
     try {
         $appId = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
         [void][Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime]
@@ -61,16 +88,17 @@ function Send-WindowsToast([string]$Title, [string]$Body, [string]$AudioUri) {
         [void]$textNodes.Item(1).AppendChild($xml.CreateTextNode($Body))
 
         $toastNode = $xml.SelectSingleNode('/toast')
-        if ($null -ne $toastNode -and $AudioUri) {
+        if ($null -ne $toastNode -and $SoundEvent) {
             $audio = $xml.CreateElement('audio')
-            $audio.SetAttribute('src', $AudioUri)
+            $audio.SetAttribute('src', "ms-winsoundevent:$SoundEvent")
             [void]$toastNode.AppendChild($audio)
         }
 
         $toast = [Windows.UI.Notifications.ToastNotification]::new($xml)
         [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($appId).Show($toast)
     } catch {
-        # Ignora fallos del subsistema grafico de notificaciones para nunca bloquear el loop del agente
+        # Fallback acustico en caso de fallo del subsistema de UI/WinRT
+        Play-WindowsSoundEvent -EventName $SoundEvent
     }
 }
 
@@ -90,7 +118,7 @@ if ($Event -eq "Stop") {
     # Evita notificar cuando el propio usuario cancelo manualmente el turno
     if ($reason -ne "USER_CANCELED") {
         $body = "Sesi$($oAcute)n completada"
-        Send-WindowsToast -Title $title -Body $body -AudioUri "ms-winsoundevent:Notification.Default"
+        Send-WindowsNotification -Title $title -Body $body -SoundEvent "Notification.Default"
     }
     Emit @{ decision = "stop" }
     exit 0
@@ -102,19 +130,18 @@ if ($Event -eq "PreToolUse") {
     $toolArgs = if ($toolCall) { $toolCall.args } else { $null }
 
     if ($toolName -eq "ask_question") {
-        $body = "Pide permiso para: pregunta interactiva"
-        Send-WindowsToast -Title $title -Body $body -AudioUri "ms-winsoundevent:Notification.Reminder"
+        # Alerta para preguntas interactivas donde el agente espera respuesta del usuario
+        $body = "Antigravity solicita respuesta interactiva"
+        Send-WindowsNotification -Title $title -Body $body -SoundEvent "Notification.Reminder"
     } elseif ($toolName -eq "run_command" -and $null -ne $toolArgs) {
         $cmd = [string]$toolArgs.CommandLine
         # Espeja las condiciones de pre-tool-enforcer.ps1 para notificar solo cuando el comando realmente pedira confirmacion
         $isDenied = ($cmd -match '(?i)--output')
         $isAutoAllowed = ($cmd -match '^(git\s+(diff|status|log)|dir|Get-ChildItem|ls)\b' -and $cmd -notmatch '[;&|`]')
         if (-not $isDenied -and -not $isAutoAllowed) {
-            $shortCmd = ($cmd -replace '\s+', ' ').Trim()
-            if ($shortCmd.Length -gt 40) { $shortCmd = $shortCmd.Substring(0, 37) + "..." }
-            $actionLabel = if ($shortCmd) { "comando ($shortCmd)" } else { "comando" }
-            $body = "Pide permiso para: $actionLabel"
-            Send-WindowsToast -Title $title -Body $body -AudioUri "ms-winsoundevent:Notification.Reminder"
+            # Notifica que se requiere acceso a consola sin volcar el comando crudo en la alerta
+            $body = "Antigravity solicita acceso a consola"
+            Send-WindowsNotification -Title $title -Body $body -SoundEvent "Notification.Reminder"
         }
     }
 
