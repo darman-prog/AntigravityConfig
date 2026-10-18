@@ -1,0 +1,806 @@
+# Actualizaciones del harness — registro
+
+> **Para quién:** dev junior con TDAH — una entrada por cambio, secciones cortas y tablas; leer en 2 min.
+> **Regla:** append-only; la entrada más reciente va arriba. Cada entrada dice qué cambió, por qué, cómo se verifica y cómo se revierte; si el cambio dura más de una sesión o va entre 2 o más agentes, además **qué criterios de aceptación** tenía.
+> **Alcance:** cambios al harness (config global, skills, agentes, scripts). El detalle de arquitectura está en la [auditoría v2](auditoria-v2.md) y el flujo operativo en el [pipeline](pipeline.md).
+
+## Historial
+
+| Fecha | Cambio | Alcance | Estado |
+| --- | --- | --- | --- |
+| 2026-10-17 | Modernización integral de la documentación a Antigravity CLI: purga completa de referencias a OpenCode en `GEMINI.md`, `selftest.js`, `pipeline.md`, `estado-actual.md`, `presupuestos.md`, `notion.md`, `test-carga-harness.md`, `auditoria-subagentes.md` y `adr/001`; reescritura de los pipelines a la arquitectura real de `agy` (agente `default`, modo `/plan`, 6 subagentes y scripts `harness-budget.ps1`, `new-feature.ps1`, `audit-session-skills.ps1`, `publish-global-agy.ps1`) | `GEMINI.md`, `docs/harness/`, `docs/specs/`, `scripts/`, `docs/adr/` | Aplicado; 100% Antigravity CLI, guardarraíl exit 0 |
+| 2026-10-17 | Personalización y optimización de la TUI en Antigravity CLI (`agy`): paleta de 6 colores semánticos nativos para subagentes (`backend-expert`=azul, `auditor`=amarillo, `debugger`=rojo, `ui-ux`=púrpura, `quality`=pizarra, `tester`=plata), consolidación limpia de `build` y `plan` en `GEMINI.md`, hook `SessionStart` con banner de bienvenida (`tui-welcome`), protocolo de badges en `uso-eficiente` (`[SKILL]`, `[CMD]`, `[FILE]`, `[TEST]`, `[SUBAGENT]`) con validación en `audit-session-skills.ps1`, rutas portables relativas en `hooks.json` y sincronización de `hooks/` en el plugin global | `.agents/agents/`, `.agents/hooks/`, `.agents/hooks.json`, `.agents/skills/uso-eficiente/`, `scripts/`, `docs/harness/` | Aplicado; 6 subagentes (237 líneas), 38 skills, 3 hooks en `hooks.json` con rutas relativas, `audit-session-skills.ps1` exit 0 con columna Badge, `publish-global-agy.ps1` exit 0, `pre-tool-enforcer.ps1` MD5 intacto |
+| 2026-10-17 | Remediación M5 de agentes en Antigravity CLI (`agy`), consolidación de `build` y `plan` en `GEMINI.md` y publicación global de los 6 subagentes: eliminados `build.md` y `plan.md`, creado `GEMINI.md` (33 líneas, sin colisionar con `AGENTS.md` de OpenCode), añadidos `name`, `mainAgent: false` y `subagent: true` en los 6 subagentes (`.agents/agents/*.md`) y publicado el plugin global en `~/.gemini/config/plugins/antigravity-harness` | `GEMINI.md`, `.agents/agents/*.md`, `scripts/harness-budget.ps1`, `scripts/publish-global-agy.ps1`, `docs/harness/` | Aplicado; los 6 subagentes aparecen en `invoke_subagent` del agente `default`, plugin global `antigravity-harness` habilitado (`6 subagents, 38 skills, AGENTS.md + GEMINI.md`), guardarraíl exit 0 |
+| 2026-10-17 | Trazabilidad y auditoría real de skills en sesión: badge `[SKILL] Cargando <nombre>` en `view_file`, re-lectura obligatoria post-`CONTEXT_SUMMARY`, declaración con regla aplicada y nuevo script `scripts/audit-session-skills.ps1` | `AGENTS.md`, `.agents/skills/uso-eficiente/SKILL.md`, `scripts/audit-session-skills.ps1`, `docs/harness/` | Aplicado; auditoría de sesión OK (0 cargas fingidas), `AGENTS.md` 71/75, guardarraíl exit 0 |
+| 2026-10-17 | Lifecycle Hook `windows-notify` (`notify-windows.ps1`): notificaciones nativas WinRT Toast en `Stop` ("Sesión completada" + `Notification.Default`) y `PreToolUse` ("Pide permiso para: <acción>" + `Notification.Reminder`) con detección inteligente de foco (`user32.dll`) | `.agents/hooks/notify-windows.ps1`, `.agents/hooks.json`, `scripts/harness-budget.ps1`, `docs/harness/` | Aplicado; ambos sonidos y Toasts probados en vivo con `-Force`, supresión por foco verificada, guardarraíl exit 0, `pre-tool-enforcer.ps1` MD5 intacto |
+| 2026-10-17 | Mejoras DX, Calidad de Código, UI y Triggers 100%: ritual `view_file` en `AGENTS.md` y 8 agentes, traducción `frontend-design-review` a español, `code-quality` obligatoria + `LINTER-PRESETS.md`, 46 probes (38/38 skills + `agy-customizations`), limpieza de 9 playbooks UI en `impeccable/references/` y script `scripts/new-feature.ps1` | `AGENTS.md`, `.agents/`, `scripts/`, `docs/harness/` | Aplicado; 38 skills, AGENTS.md 71/75, 46 probes (100% cobertura), guardarraíl exit 0, `new-feature.ps1 -DryRun` exit 0, pre-tool hook MD5 intacto |
+| 2026-10-15 | Port de OpenCode a Antigravity CLI (`agy`): rediseño 100% texto de `impeccable`, eliminación de binarios y scripts (`salida.bin`), infraestructura DDR (`docs/features/`), sanitización mojibake y tope `AGENTS.md` a 75 líneas | `.agents/`, `docs/`, `scripts/`, `AGENTS.md` | Aplicado; 38 skills, AGENTS.md 71/75, probes 25/25, guardarraíl exit 0, pre-tool hook MD5 verificado; cero binarios y cero mojibake |
+| 2026-10-14 | Skill evaluacion-experiencia: medicion cuantitativa de UX (SUS, UMUX-Lite, NASA-TLX, factores de calidad ISO 25010 adaptados), gate de umbrales y runbook de instalacion | `.opencode/skills/evaluacion-experiencia/`, `AGENTS.md`, `scripts/trigger-probes.json`, `calidad-cierre`, `inicio-proyecto`, `docs/specs/004` | Aplicado; 38 skills, AGENTS.md 70/70, probes 21->23, guardarraíl exit 0, auditor APROBADO; sync + smoke runtime pendiente de reinicio |
+| 2026-10-06 | Check 11 del guardarraíl (integridad de codificación / mojibake), smokes S1–S5 de las rutas nuevas por `opencode run`, fila de `testing` ampliada a "correr tests" y `estado-actual.md` al día | `scripts/harness-budget.ps1`, `AGENTS.md`, `docs/harness/estado-actual.md`, `~/Downloads/ProyectosSoftware/*/AGENTS.md` | Aplicado; guardarraíl exit 0; S1–S4 PASS, S5 parcial; 10 proyectos migrados sin mojibake |
+| 2026-10-06 | Remediación de la auditoría de complementación: cerrados los 7 huecos de backend en 8 commits (protección de datos, realtime, TLS, DNS, topología, caching y jobs) más la corrección de codificación | `.opencode/skills/`, `AGENTS.md`, `scripts/trigger-probes.json`, `docs/harness/` | Aplicado; 37 skills (nueva `proteccion-datos`), `AGENTS.md` 69/70, probes 16 → 21, guardarraíl exit 0 |
+| 2026-10-06 | Auditoría de complementación de skills de backend: 4 áreas sin dueño (DNS, TLS, realtime, datos), 3 parciales (topología, caching, jobs) y CI/CD refutada como cubierta; impacto verificado en 6 proyectos y dueño asignado por hueco | `docs/harness/auditoria-complementacion.md`, `docs/README.md` | Aplicado; solo informe, sin cambios en skills |
+| 2026-10-04 | Fusión de skills de backend (`convenciones-backend` + `contratos-api` → `api-backend`), reducción de duplicación en `ui-ux`/`CRITERIOS-UI-UX.md`, y migración del Skill Gate en los 8 proyectos de `ProyectosSoftware` | `.opencode/skills/`, `.opencode/agents/`, `AGENTS.md`, `scripts/`, `~/Downloads/ProyectosSoftware/*/AGENTS.md` | Aplicado; 36 skills; guardarraíl exit 0; 8/8 proyectos sin referencias muertas |
+| 2026-10-04 | Invocar RTK por su filtro: regla general en `uso-eficiente` + excepción `git` + orden de invocación y tabla de ahorro medida en `testing` | `.opencode/skills/uso-eficiente/`, `.opencode/skills/testing/`, `.gitignore` | Aplicado; guardarraíl exit 0; sync identidad OK; falta reiniciar TUI |
+| 2026-10-03 | Skills por tipo de tarea: fusion de producto, code-clue universal, investigación/datos/automatización y activación MCP; Notion pasa to docs | `AGENTS.md`, `.opencode/skills/`, `docs/harness/`, guardarraíl y probes | Aplicado; guardarraíl 37 skills + 17 probes; sync -ForcePurge identidad OK; falta reiniciar TUI y humos |
+| 2026-10-02 | Verificación RTK post-cambios del harness: 4/4 probes PASS, hash del plugin MATCH, humo con agente OK, métricas del gate como baseline | `docs/adr/001`, `estado-actual.md` | Aplicado; gate 39.9% ahorro, recalls 33%/50% (sin datos suficientes); gate de decisión sigue abierto hasta 2026-10-12 |
+| 2026-09-28 | Integración RTK v0.50.0 como dependencia de máquina global: compresión de salidas bash de tests/lint/builds vía plugin OpenCode, excluye `git`/`powershell`/`opencode`/`ollama`, telemetría off, recall 4 días | `docs/adr/001-rtk-dependencia-de-maquina.md`, `estado-actual.md`, `pipeline.md`, `rtk.ts` (global), `config.toml` (global) | Aplicado; probes verificados (exclusión git OK, vitest reescribe, harness intacto); plugin idéntico por SHA-256 al source auditado; auditor APROBADO; TUI reinicio + smokes pendientes; gate 14 días 2026-10-12 |
+| 2026-09-28 | Lote de refuerzo: guardarraíl valida commands/, sync detecta modificados, measure-tokens a opencode-go | `scripts/harness-budget.ps1`, `sync-global.ps1`, `scripts/measure-tokens.js`, `docs/harness/presupuestos.md` | Aplicado; 4 commits; guardarraíl exit 0, sync exit 0; verificación con fixtures |
+| 2026-09-27 | Config global restaurada: permisos de `external_directory` y `permission.skill` recuperados tras borrado accidental | `~/.config/opencode/opencode.jsonc` (global, sin commit) | Aplicado; guardarraíl exit 0, sync exit 0, config carga en OpenCode; falta reiniciar TUI |
+| 2026-09-27 | Medición de tokens: script `measure-tokens.js` + reporte con datos reales de 3 tareas | `scripts/measure-tokens.js`, `scripts/token-measurement-report.json` | Aplicado; 5 steps medidos; hallazgo clave: input domina 342x sobre output, cache write = 0 (no se escribe caché); coste estimado ~$0.40/sesión (10 steps) |
+| 2026-09-25 | Colisión de skills resuelta: el wrapper con typo pasa a `impeccable-doctrina` y la tabla nombra las dos | `skills/impecable/` → `skills/impeccable-doctrina/`, `AGENTS.md`, `ui-ux.md`, 4 skills | Aplicado; dos skills declaraban el mismo `name` y el registro publicaba una al azar; guardarraíl exit 0; falta el humo del flujo UI |
+| 2026-09-25 | Cerebro documental del harness: `docs/project-brain/` con índice y arquitectura; `contexto-proyecto` y `calidad-cierre` lo consultan ante la duda | `docs/project-brain/{INDEX,ARCHITECTURE}.md`, `contexto-proyecto`, `calidad-cierre`, `docs/README.md` | Aplicado; 0 enlaces rotos, description 44/45 palabras, guardarraíl exit 0; falta el humo "¿qué hace el agente ante una duda?" |
+| 2026-09-25 | Fuera sdd-lite: el plan no produce specs; los criterios de un cambio largo viajan en el changelog y las decisiones de arquitectura en `docs/adr/`; los topes pasan a doc propio | `PLAN-TECNICO.md`, `plan.md`, `auditor.md`, 5 skills, `AGENTS.md:27`, `harness-budget.ps1` (9 bloques), `pipeline.md`, `estado-actual.md`, `README.md`, `docs/specs/003` | Aplicado; criterios: grep de `docs/specs` = 0, guardarraíl exit 0 con 9 bloques, sync con identidad OK; falta reiniciar TUI y humos |
+| 2026-09-25 | `external_directory` vuelve a ser allowlist (`*` ask + allow de las 2 carpetas del harness) y `AGENTS.md` gana las reglas "ante la duda" y "fuera del repo" | `~/.config/opencode/opencode.jsonc` (global, sin commit), `AGENTS.md:51`, `docs/harness/estado-actual.md:138` | Aplicado; el `*` ask global anulaba las allowlists internas de opencode (causa del ruido al delegar); falta reiniciar y el humo |
+| 2026-09-24 | Convencion de documentacion: la doc del harness vive en `docs/harness/` (antes `.opencode/Logs/`) + indice en `docs/README.md` | 4 docs movidos, `docs/specs/002`, `harness-budget.ps1` | Aplicado; check nuevo, enlaces verificados e historial preservado (git rename) |
+| 2026-09-24 | Permiso del harness: `external_directory` a `ask` (y `logLevel: WARN` al cerrar los humos) | `~/.config/opencode/opencode.jsonc` (global, sin commit) | `ask` aplicado; `WARN` pendiente de los humos |
+| 2026-09-24 | Sync fail-closed: dry-run de purga, espejo del repo y prune del log | `sync-global.ps1` | Aplicado; gate probado con archivo basura y log respaldado |
+| 2026-09-24 | Guardarraíl: las skills tampoco pueden mandar a delegar en un primary (incluye `references/`) | `scripts/harness-budget.ps1` | Aplicado; 2 negativos y 3 legales sin falso positivo |
+| 2026-09-24 | Documentacion del harness: estado actual con indices + pipeline corregido con los roles nuevos | `.opencode/Logs/estado-actual-harness.md` (nuevo), `pipeline-ejecucion-tareas.md`, `auditoria-skills-agentes-v2.md` | Aplicado; referencias por seccion (sin lineas, que se pudren) |
+| 2026-09-24 | Roles de agente reales: `ui-ux` y `backend-expert` a `subagent`, allowlists `permission.task` fail-closed, roster sincronizado, LF fijado en el repo | 8 agentes + `AGENTS.md` + `scripts/harness-budget.ps1` + `.gitattributes` | Aplicado; 6 checks verificados con fixture; falta reiniciar TUI y smoke |
+| 2026-09-23 | Fail-closed real: cierre de frontmatter obligatorio y sync sin guardarraíl = error | `scripts/harness-budget.ps1`, `sync-global.ps1` | Aplicado; verificado con fixtures |
+| 2026-09-23 | Skill `comunicacion-asertiva` (doctrina de redacción, densidad y diagramas) obligatoria en toda tarea | `.opencode/skills/comunicacion-asertiva/` + `AGENTS.md` + `uso-eficiente` §4 + guardarraíl | Aplicado; +45 tok fijos y ~+310 tok/tarea; falta reiniciar TUI y smoke de formato |
+| 2026-09-23 | Gatillos de patrones (pool, proxy) y probes de trigger en el guardarraíl | `arquitectura` (description + `references/PATRONES.md`), `convenciones-frontend` (description), `AGENTS.md`, `scripts/` | Aplicado; +24 tok/sesión; falta reiniciar TUI y smoke |
+| 2026-09-22 | Remediación de auditoría: guardarraíl fail-closed, allowlist de permisos, routing UI sin `npx`, descripciones recortadas | `scripts/harness-budget.ps1` + `sync-global.ps1` + agentes + 10 `SKILL.md` + `AGENTS.md` + global `opencode.jsonc` | Aplicado; verificado con fixture, guardarraíl verde y A/B de tokens (−565, −4,3%); falta reiniciar TUI |
+| 2026-09-21 | Adopción de skill de review UI (`frontend-design-review`, Microsoft, adaptada) | `.opencode/skills/frontend-design-review/` + `AGENTS.md` + guardarraíl | Aplicado; smoke en TUI pendiente de reinicio |
+| 2026-09-21 | Routing UI sin doble activación (filas diferenciadas + punteros cross-skill) | `AGENTS.md` + skills `convenciones-frontend`/`ui-ux` | Aplicado y medido: −0,25% (ruido); se descarta fusionar skills |
+| 2026-09-19 | Notificaciones de escritorio vía plugin (Windows Terminal 1.24 ignora OSC 777) | Global (`~/.config/opencode/plugins/notify-windows.js`) | Verificado en TUI: sonido + toast al pedir permiso con el terminal fuera de foco |
+| 2026-09-19 | Sonidos y notificaciones de atención en la TUI | Global (`~/.config/opencode/tui.json`) | Parcial: sonidos OK; el banner nativo no llega (ver entrada siguiente) |
+
+<a id="sec-remediacion-agentes-m5-2026-10-17"></a>
+## 2026-10-17 — Remediación M5 de Agentes en Antigravity CLI (`agy`), Orquestación en `GEMINI.md` y Publicación Global (`publish-global-agy.ps1`)
+
+- **Qué cambió:**
+  1. **Diagnóstico M5 y arquitectura nativa en `agy`:** Se demostró con el spike que `agy` registra agentes/subagentes cuando incluyen `name: <id>`, `mainAgent` y `subagent` en el YAML frontmatter, y que el agente `default` (con `/plan` integrado) monta automáticamente en `invoke_subagent` todos los subagentes con `mainAgent: false` y `subagent: true`.
+  2. **Consolidación de `build` y `plan` en `GEMINI.md`:** Se eliminaron `.agents/agents/build.md` y `.agents/agents/plan.md` y se consolidó toda su orquestación (modo `/plan`, delegación a los 6 subagentes, ciclo DDR y gate `calidad-cierre`) en `GEMINI.md` (33 líneas en raíz), evitando colisionar con `AGENTS.md` de OpenCode.
+  3. **Actualización de los 6 subagentes (`.agents/agents/*.md`) y publicación global (`scripts/publish-global-agy.ps1`):** Se añadieron `name`, `mainAgent: false` y `subagent: true` a `ui-ux`, `backend-expert`, `auditor`, `quality`, `debugger` y `tester` (234/350 líneas en total, todos ≤ 45 líneas), corrigiendo `question` -> `ask_question` en `tester.md`. El nuevo script `scripts/publish-global-agy.ps1` publica los 6 subagentes, `rules/AGENTS.md`, `rules/GEMINI.md`, las 38 skills y `hooks.json` en `~/.gemini/config/plugins/antigravity-harness`.
+- **Cómo se verifica:** `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\harness-budget.ps1` (exit 0), `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\publish-global-agy.ps1` (exit 0) y `agy plugin list`.
+- **Cómo se revierte:** `git checkout -- .agents/agents/ scripts/ docs/` y eliminar `GEMINI.md`, `scripts/publish-global-agy.ps1` y `~/.gemini/config/plugins/antigravity-harness`.
+
+<a id="sec-trazabilidad-skills-2026-10-17"></a>
+## 2026-10-17 — Visibilidad en TUI, Re-hidratación Post-Compactación y Auditoría Real de Skills (`audit-session-skills.ps1`)
+
+- **Qué cambió:**
+  1. **Badge `[SKILL] Cargando <nombre>` en `view_file` (`AGENTS.md` y `uso-eficiente`):** Toda lectura de un `SKILL.md` con `view_file` utiliza ahora el prefijo `[SKILL] Cargando <nombre>` en `toolAction`, diferenciando visualmente en la TUI de Antigravity CLI las cargas de skills frente a las lecturas de archivos del proyecto.
+  2. **Re-lectura obligatoria tras `CONTEXT_SUMMARY` y evidencia en `Skills:`:** Se instruye en `AGENTS.md` y `uso-eficiente/SKILL.md` re-leer con `view_file` las skills activas después de cada autocompactación de contexto (`CONTEXT_SUMMARY`) y declarar en el mensaje qué regla se aplicó (`Skills: <nombre> (<regla aplicada>)`).
+  3. **Auditor de sesión (`scripts/audit-session-skills.ps1`):** Nuevo script en PowerShell (ASCII puro sin BOM) que inspecciona el `transcript.jsonl` de la conversación actual y compara las lecturas reales (`view_file` a `SKILL.md` e invocaciones slash) contra las declaraciones `Skills:` del agente en el chat, fallando con `exit 1` si detecta alguna "carga fingida".
+- **Cómo se verifica:** `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\audit-session-skills.ps1` (exit 0) y `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\harness-budget.ps1` (exit 0).
+- **Cómo se revierte:** Eliminar `scripts/audit-session-skills.ps1` y revertir `AGENTS.md`, `.agents/skills/uso-eficiente/SKILL.md`, `docs/harness/estado-actual.md` y `docs/harness/changelog.md`.
+
+<a id="sec-windows-notify-2026-10-17"></a>
+## 2026-10-17 — Lifecycle Hook `windows-notify` (Notificaciones Nativas de Windows en Antigravity CLI)
+
+- **Qué cambió:**
+  1. **Script `.agents/hooks/notify-windows.ps1`:** Nuevo script PowerShell en ASCII puro sin BOM que implementa notificaciones WinRT Toast (`ToastText02`) con título fijo `"Antigravity"`, detección inteligente de ventana en primer plano vía `user32.dll` (`GetForegroundWindow` + `GetWindowThreadProcessId`) y flag `-Force` para pruebas directas.
+  2. **Eventos y sonidos diferenciados:** En `Stop` (`terminationReason != "USER_CANCELED"`) muestra `"Sesión completada"` con sonido `ms-winsoundevent:Notification.Default` y devuelve `{"decision":"stop"}`. En `PreToolUse` (`ask_question` o `run_command` que requiera confirmación del usuario) muestra `"Pide permiso para: <acción>"` con sonido `ms-winsoundevent:Notification.Reminder` y devuelve `{"decision":"allow"}` para delegar la decisión real en `permission-gate`.
+  3. **Registro y guardarraíl:** Registrado bajo la clave `"windows-notify"` en `.agents/hooks.json` sin tocar `.agents/hooks/pre-tool-enforcer.ps1` (MD5 intacto), y validado en el Bloque 9 de `scripts/harness-budget.ps1`.
+- **Cómo se verifica:** `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\harness-budget.ps1` (exit 0) y pruebas con payload JSON por `stdin` hacia `.agents/hooks/notify-windows.ps1 -Event Stop -Force` y `-Event PreToolUse -Force`.
+- **Cómo se revierte:** Eliminar `.agents/hooks/notify-windows.ps1` y revertir `.agents/hooks.json` y `scripts/harness-budget.ps1`.
+
+<a id="sec-mejoras-dx-ui-triggers-2026-10-17"></a>
+## 2026-10-17 — Mejoras de DX, Calidad de Código, UI y Cobertura 100% de Triggers
+
+- **Qué cambió:**
+  1. **Fiabilidad de Triggers (Skill Gate 100%):** Se alineó el ritual de activación en `AGENTS.md` y los 8 agentes (`.agents/agents/*.md`) con la herramienta nativa `view_file` de Antigravity CLI (`lee cada SKILL.md con view_file`). Se tradujo la `description` de `frontend-design-review` al español (34 palabras), se promovió `code-quality` a obligatoria en la fila de refactor/deuda técnica/code smells y se amplió `scripts/trigger-probes.json` de 25 a **46 probes** cubriendo el 100% de las 38 skills locales + `agy-customizations` (forzado ahora en el Bloque 6 de `harness-budget.ps1`).
+  2. **Limpieza de Playbooks UI (`impeccable/references/`):** Se eliminaron los artefactos de reemplazo regex (backticks truncados, `PRODUCT.md y DESIGN.md` fuera de contexto) y párrafos huérfanos del CLI `.impeccable/` (`serve-question`, `IMPECCABLE_CRITIQUE_META`, `snapshot_file`, `font-match`) en 9 playbooks (`routing.md`, `init.md`, `polish.md`, `new-work.md`, `visualize.md`, `critique.md`, `colorize.md`, `layout.md`, `typeset.md`), y se blindó el Bloque 11 de `harness-budget.ps1` contra su reaparición. Se preservó la Invariante 6 descartando crear checklists UI duplicados.
+  3. **DX y Calidad de Código:** Se creó `scripts/new-feature.ps1` (scaffolding DDR con `-Slug`, `-Title`, `-Status`, `-DryRun` que consume directamente `.agents/skills/documentacion/references/FEATURE-SPEC.md`), se creó `.agents/skills/code-quality/references/LINTER-PRESETS.md` (presets estrictos para TS/Biome/ESLint, Python Ruff+Mypy, C#/.NET y Go), se eliminaron referencias obsoletas a `/init` en `AGENTS.md` y `uso-eficiente`, y se actualizó `docs/harness/estado-actual.md`.
+- **Cómo se verifica:** `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\harness-budget.ps1` (exit 0) y `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-feature.ps1 -Slug "test-ddr" -Title "Prueba DDR" -DryRun` (exit 0).
+- **Cómo se revierte:** `git checkout -- AGENTS.md .agents/ scripts/ docs/` y eliminar `scripts/new-feature.ps1` y `.agents/skills/code-quality/references/LINTER-PRESETS.md`.
+
+<a id="sec-port-opencode-2026-10-15"></a>
+## 2026-10-15 — Port de OpenCode a Antigravity CLI (agy): rediseño texto de impeccable e infra DDR
+
+**Qué:** (1) Port de cambios y referencias desde PlantillaOpenCode hacia PlantillaAntiGravity adaptados para Google Antigravity CLI (`agy`). (2) Rediseño completo de `impeccable` como guía 100% texto de craft, jerarquía y heurísticas UI/UX: eliminación de binarios `.exe`, scripts `.js`, subcomandos CLI y dependencias de live server; supresión total de `salida.bin`. (3) Infraestructura de especificaciones de features multi-sesión (DDR) en `docs/features/` con plantillas `FEATURE-SPEC.md` y `FEATURE-CARD.md` (sin specs específicas de OpenCode). (4) Integración del runner directo en `testing` (reemplazo de wrappers obsoletos). (5) Sanitización de mojibake (doble codificación UTF-8) en playbooks de UI y preservación del enforcer de permisos inviolable `pre-tool-enforcer.ps1`. (6) Ajuste del guardarraíl y presupuestos: tope `AGENTS.md` a 75 líneas (actual: 71 líneas), eliminación de excepciones de líneas para `impeccable`, 25 probes de activación, y nuevo check de higiene Antigravity.
+
+**Por qué:** Antigravity CLI opera estrictamente sin binarios (`.exe`, `.bin`), en UTF-8 nativo y con límites presupuestarios compactos. Las capacidades de diseño de `impeccable` se conservan y maximizan como doctrina pura de texto bajo demanda sin sobrecarga técnica.
+
+**Cómo se verifica:** `scripts/harness-budget.ps1` exit 0 (38 skills, AGENTS.md 71/75, agentes 8/317/350, hooks OK, 0 binarios, 0 residuos, 0 mojibake); hash MD5 de `pre-tool-enforcer.ps1` idéntico a `93F4BBD789AAD058B247D5A51B73719F`; 25 trigger probes PASS.
+
+**Cómo se revierte:** Restitución desde el snapshot de respaldo en `scratch/backup-pre-port`.
+
+<a id="sec-evaluacion-experiencia-2026-10-14"></a>
+## 2026-10-14 — Skill evaluacion-experiencia: medicion cuantitativa de UX
+
+**Qué:** se añade la skill `evaluacion-experiencia` (canon de medición cuantitativa de UX: SUS, UMUX-Lite, NASA-TLX, factores de calidad ISO/SQuaRE adaptados), con flujo de 6 etapas, reglas anti-duplicación, límites textuales y 5 referencias bajo demanda. Se rutea en el Skill Gate, +2 probes, punteros en `calidad-cierre` (umbrales como gate) e `inicio-proyecto` (métricas de éxito). Se publica runbook one-off en `docs/specs/004` y README de la skill con gate de adopción time-boxed (revisar tras primera medición real o 30 días; 0 usos -> retirar). ISO-25010 se marca como vocabulario adaptado, no certificación formal.
+
+**Por qué:** el harness solo tenía evaluación cualitativa/heurística (ui-ux, frontend-design-review, impeccable); faltaba medir con escalas y factores de calidad numerables. El coste fijo es ~+100 tok/sesión (dentro del ruido de medición) y `AGENTS.md` queda en 70/70, tope explícito.
+
+**Cómo se verifica:** guardarraíl exit 0 (38 skills, AGENTS.md 70/70, 23 probes); auditor APROBADO (anti-duplicación con ui-ux, accesibilidad, frontend-design-review, performance, calidad-cierre); sync global (pendiente de reinicio de TUI); smoke `opencode run "mide la experiencia de usuario con SUS y UMUX-Lite"` pendiente por reinicio de TUI.
+
+**Cómo se revierte:** `git revert` de los 2 commits; purga del global con `.\sync-global.ps1 -ForcePurge`. Sin cambios en DB ni migraciones.
+
+**Criterios de aceptación:** skill con SKILL.md <=65 líneas y description <=45 palabras; anti-duplicación verificada por auditor; reportes persisten en `docs/project-brain/ux-evaluacion/` con `confidence`; umbrales alimentan el gate de `calidad-cierre`; todo reversible.
+
+**Hallazgo abierto (adopción):** la medicion cuantitativa requiere usuarios reales (n >= 8 indicativo); sin uso real en 30 dias se retira. Pendiente el smoke de runtime (como N2-N6).
+
+<a id="sec-integridad-codificacion-2026-10-06"></a>
+## 2026-10-06 — Check de mojibake y smokes de las rutas nuevas
+
+**Qué:** (1) El guardarraíl gana el bloque **11) integridad de codificación**: detecta en `.opencode`, `docs` y `scripts` la firma de una doble codificación UTF-8 → 1252 → UTF-8 (la que introdujo un script de reemplazo y corrompió 6 archivos). (2) Se ejecutaron los smokes de las rutas nuevas con `opencode run` (sin TUI): S1 GDPR → `proteccion-datos`; S2 websockets → `api-backend`; S3 TLS → `infraestructura`; S4 worker → `api-backend`; los cuatro PASS. (3) La fila del Skill Gate de tests pasa a "Escribir, revisar o correr tests" en el harness y en los 10 proyectos, porque la regla del orden de invocación de RTK vive en `testing` y no se cargaba al correr tests. (4) `estado-actual.md` se reescribe con las cifras reales (69 líneas de `AGENTS.md`, 21 probes) y los pendientes vigentes.
+
+**Por qué:** el mojibake ya ocurrió una vez y nada lo impedía. Y los smokes de las 7 áreas remediadas eran el único paso que faltaba para cerrar la auditoría de complementación.
+
+**Cómo se verifica:** fixture con la firma de mojibake en `docs/harness/` → el guardarraíl falla nombrándolo (exit 1) y al retirarlo vuelve a exit 0; los 10 `AGENTS.md` de proyectos escaneados: 0 con la firma. Smokes S1–S4 con `opencode run --model opencode-go/deepseek-v4.1-flash`.
+
+**Cómo se revierte:** `git revert` del commit y, en los proyectos, `git checkout AGENTS.md`.
+
+**Criterios de aceptación:** el guardarraíl detecta mojibake y pasa en el repo limpio; las 4 rutas nuevas se cargan en una sesión real; los 10 proyectos comparten la fila ampliada.
+
+**Hallazgo abierto (S5):** ante "necesito correr los tests", el agente recomienda `rtk vitest run` pero **lidera con `npm run test`**, y `testing` no se cargó pese a la fila ampliada. El filtro de RTK se conoce (viene de `uso-eficiente`, que sí se carga); lo que falla es la prioridad. Decisión pendiente: reforzar la redacción de `uso-eficiente` o aceptarlo.
+
+<a id="sec-remediacion-complementacion-2026-10-06"></a>
+## 2026-10-06 — Remediación de la auditoría de complementación
+
+**Qué:** los 7 huecos de la auditoría de complementación se cerraron en 8 commits. (1) `proteccion-datos` (skill nueva): bcrypt/argon, cifrado, PII, retención, anonimización, derecho al olvido y bitácora; `seguridad` suma el hashing obligatorio y el puntero. (2) Realtime en `api-backend`: auth de canal, heartbeat, reconexión con backoff, backpressure, SSE vs WebSocket; `infraestructura` suma sticky sessions y broker. (3) TLS: terminación en el borde, certificados y rotación en infra; HSTS, TLS 1.2+ y `SECURE_*` en seguridad. (4) DNS: registros, TTL, SPF/DKIM/DMARC, wildcard y split-horizon. (5) Topología: gateway como punto único, balanceador con health check, discovery sin IPs fijas. (6) Caching: borde, invalidación, ETag y partición por usuario; puntero de `performance` corregido. (7) Jobs: worker aparte, backoff, DLQ con alerta, idempotencia y cron sin solape.
+
+**Por qué:** la auditoría probó que un agente que construyera auth no tenía regla de hashing, que RateClash opera con WebSockets sin cobertura y que no existía ninguna regla de DNS ni TLS — todo con impacto verificado en 6 proyectos reales.
+
+**Cómo se verifica:** guardarraíl exit 0 en cada commit; probes de trigger de 16 a 21; `api-backend` 48/65, `infraestructura` 63/65, `seguridad` 42/65 y `proteccion-datos` 39/65 líneas.
+
+**Cómo se revierte:** `git revert` de los commits de la serie y `sync-global.ps1 -ForcePurge`.
+
+**Criterios de aceptación:** las 8 áreas con dueño; ninguna skill por encima del tope; cada hueco con al menos una regla accionable; el contrato de errores sigue en un único archivo (check del guardarraíl).
+
+**Nota:** en el mismo cierre se corrigió un mojibake (doble codificación UTF-8 → 1252 → UTF-8) en 6 archivos del harness, introducido por un script de reemplazo; el escaneo final de 145 archivos da 0 coincidencias de la firma.
+
+<a id="sec-auditoria-complementacion-2026-10-06"></a>
+## 2026-10-06 — Auditoría de complementación de skills de backend
+
+**Qué:** auditoría de 8 áreas del desarrollo backend contra las 36 skills del harness, con verificación de impacto en los proyectos reales. Se cierra como **no cubiertas** DNS, TLS, realtime y protección de datos; **parciales** topología de red, caching y jobs; y **cubierta** CI/CD (refuta el diagnóstico inicial). Se asigna dueño por hueco respetando la frontera declarada de cada skill, con un presupuesto de **36 → 37 skills** y `AGENTS.md` 67 → 68/70.
+
+**Por qué:** un agente en un proyecto activo reportó que el harness no tenía convención para RTK; al auditar el catálogo aparecieron áreas completas sin dueño. La más grave: `seguridad` no menciona hashing de contraseñas y cuatro proyectos tienen auth real.
+
+**Cómo se verifica:** `grep` de los 8 temas en las 36 skills (excluyendo vendor); búsqueda de evidencia en 6 proyectos con `archivo:línea`; confirmación de los 3 hallazgos extra (puntero roto de `performance:32`, drift repo/global refutado, hashing ausente).
+
+**Cómo se revierte:** no aplica; el informe no modifica skills. Borrar `docs/harness/auditoria-complementacion.md` y su fila en `docs/README.md`.
+
+**Criterios de aceptación:** las 8 áreas con veredicto y evidencia; impacto real verificado por proyecto; dueño y líneas estimadas por hueco; plan de remediación separado y sujeto a aprobación.
+
+**Huecos más graves, por riesgo:** (1) protección de datos — sin regla de bcrypt/argon/cifrado/retención; (2) realtime — RateClash opera con `wss://` y `InMemoryChannelLayer` (`settings.py:117`); (3) TLS — RateClash sin ningún `SECURE_*` mientras MetaBolic los tiene (`settings.py:94-101`).
+
+**Siguiente paso:** plan de remediación aparte, un commit por área, orden datos → realtime → TLS → DNS → topología → caching → jobs.
+
+<a id="sec-fusion-backend-2026-10-04"></a>
+## 2026-10-04 — Fusión de skills de backend y migración de proyectos
+
+**Qué:** (1) `convenciones-backend` + `contratos-api` fusionadas en `api-backend` (estructura, contrato observable, DTOs, errores, `traceId`, versionado y flujo full-stack); conserva `references/CONVENCIONES-BACKEND.md`. (2) 16 referencias actualizadas en 5 agentes y 10 skills. (3) `ui-ux` deja de presentarse como canon de WCAG: `accesibilidad` lo es. (4) `CRITERIOS-UI-UX.md` reducido de 20 a 16 líneas: el 75% duplicado se sustituye por punteros. (5) `salidas/ofimatica/` borrada (artefactos de humo del `kit.js`). (6) Migrado el Skill Gate de los 8 proyectos de `ProyectosSoftware` a la tabla canónica de 29 filas.
+
+**Por qué:** una auditoría detectó solapamiento alto entre las dos skills de backend, y que cuatro proyectos pedía skills ya eliminadas (`impecable`, `criterio-producto`, `planeacion-proyectos`, `notion-flow`) — nombres que no existen, así que `skill("<nombre>")` fallaba en cada sesión de esos repos.
+
+**Cómo se verifica:** guardarraíl exit 0 con 36 skills y 17 probes; check 263 (contrato de errores) apunta a `api-backend`; `grep` de skills eliminadas en los 8 `AGENTS.md` = 0 coincidencias; los 8 tienen las 7 skills nuevas; `.opencode/opencode.json` creado en Systematic y Capataz.
+
+**Cómo se revierte:** `git revert` del commit del harness y `sync-global.ps1 -ForcePurge`; en los proyectos, `git checkout AGENTS.md` (o el commit previo de cada repo).
+
+**Criterios de aceptación:** 36 carpetas = 36 `SKILL.md`; ninguna skill cableada en agentes queda huérfana; 8/8 proyectos con la tabla canónica y sin nombres muertos; los 4 proyectos con Stack placeholder tienen stack real derivado de su `package.json`.
+
+**Deuda que queda:** `docs/specs/001` y `docs/harness/auditoria-v2.md` siguen nombrando `contratos-api` y `convenciones-backend`; son históricos y no se reescriben.
+
+<a id="sec-rtk-filtros-2026-10-04"></a>
+## 2026-10-04 — Invocar RTK por su filtro para comprimir salida de herramientas
+
+**Qué:** (1) `uso-eficiente` gana la regla general: si `rtk --help` lista un filtro para tu herramienta, invócala con `rtk <herramienta>` (filtros de más ruido: `ls`, `tree`, `read`, `find`, `grep`, `rg`, `log`, `err`, `docker`, `kubectl`, `gh`, `aws`, `psql`), con fallback a la forma normal. (2) Excepción deliberada: `git` no se comprime, porque el DoD de `workflow` exige revisar el diff completo. (3) `testing` gana el orden de invocación de tests (filtro RTK → runner directo → script npm) con la tabla de ahorro medida.
+
+**Por qué:** un agente en un proyecto activo descubrió que RTK no estaba en ninguna convención del repo (grep de `rtk` en los `.md`: cero resultados). La skill `testing` explicaba cómo *interpretar* la salida condensada pero nunca decía que lo *invocara*. Y `uso-eficiente`, la skill de bajo consumo de tokens, no mencionaba RTK en absoluto.
+
+**Cómo se verifica:** guardarraíl exit 0; `uso-eficiente` 41/65 líneas; `testing` 51/65 líneas; sync repo → global con identidad exacta (37 skills).
+
+**Cómo se revierte:** `git revert` del commit y `sync-global.ps1 -ForcePurge`.
+
+**Criterios de aceptación:** los agentes invocan `rtk <herramienta>` cuando existe filtro; `git` queda excluido con su justificación; la tabla de ahorro medida queda documentada en `testing`.
+
+**Evidencia medida** (máquina del usuario, oct-2026, alcance global entre proyectos):
+
+| Invocación | Ahorro |
+| --- | --- |
+| `rtk playwright test` | 93,5% y 88,5% |
+| `rtk vitest run` (23 corridas) | 83,9% |
+| `rtk lint eslint` | 64,3% |
+| `rtk pytest tests -q` | 38,7% |
+| `npm run e2e` (el mismo e2e) | 0,8% |
+| `npm run build` | 0,6% |
+
+<a id="sec-reestructura-skills-2026-10-03"></a>
+## 2026-10-03 — Skills por tipo de tarea y trabajo variado
+
+**Qué:** (1) Fusionadas `criterio-producto` + `planeacion-proyectos` en `criterio-proyecto`, conservando sus dos referencias detalladas bajo demanda. (2) `notion-flow` pasa de skill manual a `docs/harness/notion.md`; `activacion-mcp` documenta los perfiles opt-in de Notion y Playwright. (3) Añadidas `code-clue` (comentarios naturales, obligatoria al escribir código), `investigacion-web`, `analisis-datos` y `automatizacion`. (4) Skill Gate reorganizado por tipo de tarea; guardarraíl y probes actualizados.
+
+**Por qué:** orientar cada tarea a las pocas skills pertinentes, conservar el detalle útil sin cargar referencias siempre, permitir trabajo de investigación/datos/automatización, y dar comentarios pedagógicos sin exigir que el usuario los pida.
+
+**Cómo se verifica:** guardarraíl exit 0 con 37 skills; 17 probes de trigger; rutas de referencias resueltas; fixtures para el ruteo universal de `code-clue`; sync repo → global con identidad exacta.
+
+**Cómo se revierte:** `git revert` del commit y `sync-global.ps1 -ForcePurge` para restaurar el espejo.
+
+**Criterios de aceptación:** 37 carpetas y 37 `SKILL.md`; cada skill del runtime figura en el Skill Gate; `code-clue` se carga en toda escritura de código sin tag de comentario; reglas de Notion conservadas en doc; skills de investigación, datos, automatización y MCP tienen probes de routing.
+
+<a id="sec-verificacion-rtk-2026-10-02"></a>
+<a id="sec-verificacion-rtk-2026-10-02"></a>
+## 2026-10-02 — Verificación RTK: probes, hash del plugin, humo con agente y métricas del gate
+
+**Qué:** Verificación completa de la integración RTK tras los cambios del harness. (1) Los 4 probes del ADR re-ejecutados: todos PASS. (2) Hash del plugin parcheado verificado contra el ADR: MATCH. (3) Humo con agente real: `npx vitest run` reescrito a `rtk vitest`, salida comprimida `PASS (1) FAIL (0)`. (4) Métricas del gate registradas como baseline.
+
+**Por qué:** el harness cambió (skills movidas, checks nuevos, sync con WARN) y RTK es una dependencia de máquina que puede romperse en silencio si el harness cambia. Verificar que la integración sigue intacta.
+
+**Cómo se verifica:** (1) `rtk rewrite "git status --short"` → vacío/exit 1; `rtk rewrite "vitest run"` → `rtk vitest`; `rtk rewrite "powershell -File sync-global.ps1"` → exit 1; `rtk rewrite "python manage.py test"` → passthrough. (2) `Get-FileHash ~/.config/opencode/plugins/rtk.ts` → `2D8CEF48...` = ADR. (3) Proyecto vitest temporal: `npx vitest run` → `rtk vitest`, salida `PASS (1) FAIL (0)`. (4) `rtk gain --daily` → 39.9% ahorro; `rtk gain --recalls` → 33%/50% (sin datos suficientes, "-").
+
+**Cómo se revierte:** no aplica (solo verificación, sin cambios).
+
+**Criterios de aceptación:** 4/4 probes PASS · hash MATCH · humo con agente OK · ahorro >5% · sin recalls densos.
+
+<a id="sec-integracion-rtk-2026-09-28"></a>
+## 2026-09-28 — Integración RTK: compresión de salidas bash como dependencia de máquina
+
+**Qué:** (1) Instalado RTK v0.50.0 (`winget rtk-ai.rtk`) — binario, plugin OpenCode global (`~/.config/opencode/plugins/rtk.ts`) y config (`%APPDATA%\rtk\config.toml`). (2) Config de mitigaciones: telemetría off, `exclude_commands = ["git", "powershell", "opencode", "ollama"]`, recall sqlite con `retention_days = 4`, tracking `history_days = 30`, awareness `default`. (3) Documentación de la decisión con riesgos aceptados en `docs/adr/001-rtk-dependencia-de-maquina.md` (primera ADR del repo), fila en `estado-actual.md` y política de upgrade + regla de permisos en `pipeline.md`.
+
+**Por qué:** workload multi-proyecto con tests por feature; el input domina 342x el output (medición 27-09) y las salidas de test se repagan por turno. RTK comprime semánticamente (failures-only + recall lossless) lo que `tool_output` solo trunca ciegamente. No aplicado a nivel de plantilla/AGENTS.md: pasa el guardarraíl intacto (tope 60/60 y awareness invisible para el agente).
+
+**Verificación:**
+1. Probes de `rtk rewrite` (decisión compartida por todos los hosts, verificado en `decision.rs`): `git status --short` → exit 1 stdout vacío (exclusión respetada); `vitest run` → `rtk vitest` (reescribe; el colapso es diseño oficial — el wrapper fuerza no-watch + JSON, `vitest_cmd.rs:297`); `powershell -File sync-global.ps1` → exit 1 (harness intacto); sonda `python manage.py test` → passthrough (sin filtro Django built-in — insumo del gate).
+2. Integridad: plugin instalado **idéntico byte a byte** (SHA-256) al source auditado de GitHub de 42 líneas (delegación pura, sin red, fail-open). Hash del binario anclado en el ADR.
+3. Auditor pre-flight: APROBADO con avisos que se atendieron (tracking 90→30 días; hash del binario anclado; regla R2 de permisos escrita en ADR y `pipeline.md`).
+4. `npm test` pasa crudo: RTK solo filtra runners directos — los agentes deben invocar `npx vitest run` / `pytest -q` para obtener compresión.
+
+**Smoke end-to-end (2026-09-28, cerrado):** en un proceso limpio de OpenCode, un agente ejecutó `python -m pytest tests -q` y el plugin lo reescribió a `rtk pytest tests -q`; la salida llegó comprimida (`Pytest: 1 passed, 2 failed` + 2 fallos agrupados) con hint `[full output: rtk recall 10bbfe40ed37]`, y `rtk recall 10bbfe40ed37` devolvió la salida íntegra (`.FF [100%]` + traceback completo). La exclusión del harness se mantiene: `git status --short` sigue en porcelain crudo.
+
+**Nota de uso:** RTK solo comprime comandos que pasan por el tool bash de un agente de OpenCode. Un comando lanzado directamente en la terminal del usuario no se reescribe — es el comportamiento esperado, no un fallo.
+
+**Pendiente:** gate de decisión a 14 días (2026-10-12) con métricas `rtk gain --daily` / `rtk gain --recalls` / `opencode stats`.
+
+**Fricción encontrada en el humo y resuelta (2026-09-28, misma jornada):** el plugin no reescribía nada. Causa raíz: su probe de inicio es `` await $`which rtk` `` y **`which` no existe en Windows** (allí es `where`) → la promesa fallaba, el `catch` devolvía `{}` y el plugin quedaba deshabilitado **en silencio**, sin dejar rastro en el log de OpenCode. Parche local de una línea (`rtk --version` en lugar de `which rtk`), verificado invocando el hook fuera de OpenCode con las 5 rutas decisivas (`pip list`, `git status --short`, `python -m pytest tests/ -q`, `npx vitest run`, `npm test`). Hash del plugin parcheado y nota de upgrade en `docs/adr/001-rtk-dependencia-de-maquina.md`.
+
+**Rollback:** 5 comandos en `docs/adr/001-rtk-dependencia-de-maquina.md §Reversión` (incluye data dir de recall — sin residuos).
+
+## 2026-09-28 — `testing` manda a invocar el runner directo; R7 resuelto; escalera de recuperación documentada
+
+**Qué:** (1) La skill `testing` gana 3 reglas: invocar el runner de tests directamente (`npx vitest run`, no `npm test`); la salida de test se repaga en cada turno y el runner directo es lo que el harness comprime; y la escalera de recuperación cuando la salida viene condensada. (2) `exclude_commands` de RTK suma el patrón de subcomando `npm run lint`, cerrando R7. (3) ADR-001 documenta la escalera con sus verificaciones.
+
+**Por qué:** la medición en `atlas-magico` mostró que RTK comprime tests, E2E, typecheck y lint-invocado-directo, pero **no** los scripts genéricos del package manager (`npm test`, `npm run test`) ni los builds. Sin instrucción, los agentes seguirían usando `npm test` y el gate del 12-10 mediría casi cero.
+
+**Criterios de aceptación (verificados):**
+1. `npm run lint` y `npm run lint -- --fix` → sin reescritura (exit 1); `atlas-magico` vuelve a dar exit 0. **Cumplido.**
+2. `npx eslint .` → sigue reescribiéndose a `rtk lint .` (el patrón de subcomando no capturó `eslint`, que el token suelto `lint` habría incluido). **Cumplido.**
+3. La salida comprimida de vitest **incluye** el hint `[full output: rtk recall <hash>]` y el recall devuelve el reporte completo. **Cumplido.**
+4. `RTK_DISABLED=1` **no** bypasea el plugin (medido) → la regla usa el script del package manager como escalón 3, que sí devuelve salida cruda. **Cumplido.**
+5. Prespuesto: `testing` en 40 de 65 líneas; `AGENTS.md` 60/60 y agentes 310/310 intactos; guardarraíl exit 0; sync exit 0 con identidad OK. **Cumplido.**
+
+**Cómo se verifica:** `harness-budget.ps1` · `sync-global.ps1` · probes de `rtk rewrite` sobre `npm run lint` y `npx eslint .`.
+
+**Cómo se revierte:** quitar `"npm run lint"` de `exclude_commands`; `git revert` del commit y un `sync-global.ps1` para devolver el global.
+
+## 2026-09-28 — Medición de RTK en un proyecto Node real (`atlas-magico`): cobertura real y dos regresiones
+
+**Qué:** medición con el binario instalado sobre un proyecto Vite + React + TS real. Mapa de reescritura de 12 comandos, comparación crudo vs. RTK en entorno parejo, y prueba end-to-end con agente. Todo el detalle en `docs/adr/001-rtk-dependencia-de-maquina.md`.
+
+**Por qué:** el gate del 12-10 exigía saber si RTK comprime el trabajo real de los proyectos Node del usuario, no solo un caso sintético.
+
+**Hallazgos:**
+1. **Cobertura real:** RTK comprime cuando el comando **nombra al runner** (`npx vitest run` → `rtk vitest`, `npx tsc` → `rtk tsc`). `npm run vitest` también funciona (RTK pela el wrapper). Los scripts genéricos (`npm run test`, `npm test`, `npm run coverage`, `vite build`) **no comprimen**: quedan en forma passthrough o sin reescribir.
+2. **Regresión R7:** `npm run lint` se reescribe a `rtk lint`, que **despacha a ESLint**. En `atlas-magico` el `lint` es `tsc --noEmit`: crudo → exit 0; reescrito → `ESLint output: JSON parse failed`, exit 1. El comando de lint del proyecto queda roto.
+3. **Incompatibilidad con vitest 5.x:** el filtro no parsea el JSON de vitest 5 (`All parsing tiers failed`) y deja `.vitest/json/output.json` en el proyecto. Con vitest 3.2.7 el mismo filtro funciona.
+4. **El ahorro real es −20,7% de caracteres y −38,6% de líneas** (vitest 3.2.7, 8 tests, 5 fallos, entorno parejo), no el −90% que anuncia el marketing: RTK conserva los stack traces completos de vitest, que son el grueso de la salida.
+
+**Verificación:** el plugin end-to-end reescribió en un agente real (`$ rtk vitest` a partir de `npx vitest run`); `npm test` corrió crudo sin marca de RTK. Spec temporal y `.vitest/` eliminados; el repo del proyecto quedó con solo `package.json` y `package-lock.json` modificados (vitest instalado + script `test`, con aprobación del usuario).
+
+**Pendiente de decisión del usuario:** (a) agregar `lint` a `exclude_commands` o aceptar la regresión R7; (b) fijar vitest ≤4 en los proyectos donde se quiera compresión, o aceptar que en vitest 5+ los tests no se comprimen.
+
+<a id="sec-lote-refuerzo-2026-09-28"></a>
+## 2026-09-28 — Lote de refuerzo: commands validadas, sync anti-drift, medición en proveedor real
+
+**Qué:** (1) `harness-budget.ps1` gana bloque 10: cada `commands/*.md` debe tener frontmatter con `description` y `agent:` que exista en el roster. (2) `sync-global.ps1` extiende el dry-run a **archivos modificados** (no solo extras): compara contenido normalizado repo vs global y para antes de que `/MIR` los sobrescriba. (3) `measure-tokens.js` pasa a `opencode-go/qwen3.8-flash` por default (flag `--model` opcional), elimina el "USD" falso, y escribe reportes en `docs/harness/mediciones/YYYY-MM-DD.json`. (4) `presupuestos.md` documenta cuándo correr cada medición y el ruido ±1-2k.
+
+**Por qué:** tres fugas reales detectadas en la sesión del 27-09. (a) `commands/` era el único artefacto del harness que ningún check tocaba (grep = 0 menciones de "command" en el guardarraíl). (b) El dry-run del sync solo listaba EXTRA; un archivo del global modificado a mano (la clase exacta del incidente del vaciado de config) se sobrescribía en silencio. (c) El medidor corría contra `opencode/longcat-2.5-preview-free` (Zen) mientras el proveedor vigente es `opencode-go` — los ~11.3k tokens reportados no describían el setup real.
+
+**Criterios de aceptación:**
+1. Fixture `commands/test-broken.md` (sin description, agente inexistente) → guardarraíl exit 1 con 2 violaciones nombrando el archivo. **Cumplido.**
+2. Fixture global modificado (append a `workflow/SKILL.md` en `~/.config`) → sync dry-run lo lista como "Modificado" y se detiene sin `-ForcePurge`. **Cumplido** (luego se restauró el global a mano y el sync volvió a exit 0).
+3. `node scripts/measure-tokens.js 1` corre contra `opencode-go/qwen3.8-flash` y escribe `docs/harness/mediciones/2026-09-28.json` sin "USD" en las conclusiones. **Cumplido.**
+4. `estado-actual.md:64` refleja el global real (sin `commandcode`, sin `logLevel`, `opencode-go` nativo). **Cumplido** (commit 88ec75e).
+5. `.pi/` eliminado (residuo del experimento Pi, decisión del usuario). **Cumplido.**
+
+**Verificación final:** guardarraíl exit 0 (`AGENTS.md=60, skills=34, agentes=8`) · sync exit 0 (`Purgables: 0 | Modificados: 0`, identidad OK).
+
+**Hallazgo del cierre:** `opencode stats` (comando nativo, cero coste) ya agrega tokens/coste de sesiones reales desde `opencode.db` — 312 sesiones, 2.1B tokens de cache read (91.6% del input). El tema caching queda cerrado: el gateway auto-cachea con sesión estable y OpenCode la manda nativamente; no hace falta plugin.
+
+**Rollback:** `git revert` de los 4 commits del lote (88ec75e, 7ec349f, 91f271c, c1a5f69). `.pi/` no es reversible (confirmado por el usuario). Los reportes en `docs/harness/mediciones/` son evidencia histórica: no se borran al revertir.
+
+<a id="sec-restauracion-global-2026-09-27"></a>
+## 2026-09-27 — Config global restaurada tras borrado accidental
+
+**Qué:** `~/.config/opencode/opencode.jsonc` se restauró con `username`, `autoupdate: "notify"`, `share: "manual"`, `permission.skill` allow y `permission.external_directory` con `"*": "ask"` + allow de `~/.config/opencode/**` y `~/.local/share/opencode/**`. El proveedor vigente es `opencode-go`, nativo de OpenCode, que lee la credencial de `auth.json` — por eso no se escribió bloque `provider` y `commandcode` no vuelve.
+
+**Por qué:** el archivo había quedado reducido a `{ "$schema": ... }`. Eso dejó el guardarraíl en rojo (el bloque 9 exige `external_directory`, `scripts/harness-budget.ps1:277`) y con él bloqueado `sync-global.ps1`, que hace `throw` si el guardarraíl falla (`sync-global.ps1:28`). Skills y agentes dejaron de propagarse, y los permisos volvieron a los defaults de OpenCode.
+
+**Verificación:** guardarraíl `OK: AGENTS.md=60, skills=34, agentes=8` — exit 0; `sync-global.ps1` `skills=34 agentes=8 commands=1` — identidad OK, exit 0; `opencode run` responde correctamente con la config cargada. Pendiente: reiniciar la TUI para que recargue skills y agentes.
+
+**Rollback:** dejar `external_directory` como `{"*": "ask"}` y quitar el resto. Requiere reiniciar OpenCode (la config no es hot-reload).
+
+**Riesgo residual:** la config global no está versionada en git — no tiene hash, backup ni forma de diff. Por eso un borrado como este es invisible e irreversible. Mejora pendiente del harness: versionar una copia redactada de la config global para que cualquier divergencia sea detectable.
+
+<a id="sec-medicion-tokens-2026-09-27"></a>
+## 2026-09-27 — Medición de tokens: datos reales del harness
+
+**Qué:** script `scripts/measure-tokens.js` que ejecuta `opencode run --format json` con 3 tareas de ejemplo (`simple-math`, `read-file`, `list-files`) y calcula estadísticas de uso de tokens. Reporte completo en `scripts/token-measurement-report.json`.
+
+**Por qué:** antes de implementar mejoras de ahorro de tokens, necesitamos saber dónde se va el gasto. Las tablas de mejoras propuestas estimaban ahorros del 30-90%, pero sin datos reales no hay base para decidir.
+
+**Resultados (5 steps medidos):**
+
+| Métrica | Valor | Nota |
+|---|---|---|
+| Input avg | 11,316 tokens/step | Domina completamente |
+| Output avg | 33 tokens/step | Mínimo (buena señal) |
+| Cache read avg | 1,894 tokens/step | 16.7% del input |
+| Cache write | 0 | **No se escribe caché** |
+| Reasoning avg | 68 tokens/step | 0.6% del input |
+| Total avg | 13,311 tokens/step | ~$0.40 USD/sesión (10 steps) |
+
+**Hallazgos clave:**
+
+1. **Input domina 342x sobre output**: el prompt base (AGENTS.md + skills + repo map) consume casi todos los tokens. El LLM no genera código innecesario.
+2. **Cache write = 0**: el proveedor NO está guardando caché. Cada sesión nueva paga el prompt base completo. Este es el mayor desperdicio.
+3. **Cache read = 16.7%**: solo funciona dentro de la misma sesión. Entre sesiones no hay ahorro.
+4. **Razonamiento mínimo**: el modelo no piensa demasiado, lo cual es bueno para coste.
+
+**Próximos pasos propuestos:**
+
+1. **Verificar soporte de prompt caching**: el proveedor debe soportar `cache_control` (Anthropic nativo, no commandcode).
+2. **Reducir prompt base**: si el caching no funciona, la única forma de ahorrar es enviar menos contexto.
+3. **Medir sesiones largas**: la medición actual es de sesiones cortas (2 steps). Falta medir con 10+ steps para ver cómo escala.
+
+**Rollback:** borrar `scripts/measure-tokens.js` y `scripts/token-measurement-report.json`.
+
+<a id="sec-impeccable-doctrina-2026-09-25"></a>
+## 2026-09-25 — `impeccable-doctrina`: dos skills, dos nombres
+
+**Qué:** el wrapper del proyecto (flujo + detector local, 2 archivos) vivía en `.opencode/skills/impecable/` —typo— declarando `name: impecable`, **igual que el vendor oficial** en `.opencode/skills/impeccable/` (45 archivos). Con el mismo `name`, el registro solo podía publicar una y el log lo avisaba (`duplicate skill name`, `opencode.log`): el cuerpo que cargaba dependía del orden, y en los últimos arranques ganaba el vendor global. Renombrado a `impeccable-doctrina/` con `git mv` (cuerpo intacto, `name` propio y description que dice qué es y cuándo se usa). La fila de cambio UI visible de `AGENTS.md` nombra las dos; actualizados los punteros en `ui-ux.md`, `ui-ux`, `calidad-cierre`, `frontend-design-review`, `tdd` e `inicio-proyecto`.
+
+**Por qué:** con el duplicado, la doctrina del harness (detector local sin `npx`, una sola pasada, anti-doble-review) podía no cargarse nunca. El guardarraíl no lo detectaba porque valida `name == carpeta` y **cada carpeta era coherente consigo misma**; el defecto estaba en que dos carpetas distintas declaraban el mismo nombre.
+
+**Verificación:** guardarraíl exit 0 con el routing bidireccional en verde (34 skills, `AGENTS.md` 60/60, agentes 310/310); el token canónico se comparó **byte a byte** contra el nombre de la carpeta en los 8 archivos tocados (0 variantes inválidas); el wrapper sigue apuntando al launcher del vendor (`.opencode/skills/impeccable/scripts/impeccable`), que no se movió. `sync-global.ps1` purgará la carpeta con typo del global.
+
+**Rollback:** revertir el commit y hacer el `git mv` de vuelta; el sync repropaga el global.
+
+<a id="sec-cerebro-2026-09-25"></a>
+## 2026-09-25 — Cerebro documental del harness
+
+**Qué:** (1) `docs/project-brain/INDEX.md` enruta el conocimiento del harness **sin duplicarlo**: la tabla apunta a `docs/harness/*` (estado-actual, pipeline, presupuestos, changelog), marca la auditoría y los specs como históricos y anota que `docs/adr/` nace con el primer ADR. (2) `docs/project-brain/ARCHITECTURE.md` describe las 6 capas (bootstrap, doctrina, contratos, comandos, verificación, documentación), los 6 invariantes (presupuesto, espejo, permisos, fail-closed, sin hot-reload, un dato en un solo lugar), el flujo de una tarea y qué no va en ningún sitio. (3) `contexto-proyecto` deja de exigir que la tarea "toque" el cerebro: también se carga ante duda sobre el estado del proyecto, leyendo `INDEX.md` antes de preguntar o asumir. (4) `calidad-cierre` cumple la promesa que la propia skill hacía: si existe `INDEX.md`, verifica que el cambio no lo contradiga.
+
+**Por qué:** el usuario pidió que el agente vaya leyendo el project-brain o el `AGENTS.md` ante las dudas, en lugar de acumular specs que saturan. `AGENTS.md` §Tokens y contexto ya lo ordena para el bootstrap ("ante la duda: lee este archivo y `docs/project-brain/INDEX.md`"); faltaba la memoria y las dos skills que la consultan. La doctrina ya estaba escrita —`pipeline.md` titula su cierre "DoD + gate + cerebro"—; lo que no existía era la memoria.
+
+**Criterios de aceptación:** (1) los enlaces del cerebro resuelven (0 rotos); (2) la `description` de `contexto-proyecto` respeta el tope de 45 palabras (44); (3) guardarraíl exit 0; (4) `sync-global.ps1` exit 0 con identidad OK; (5) en la TUI, una pregunta con duda hace que el agente lea `INDEX.md` en vez de preguntar o suponer.
+
+**Verificación:** enlaces del cerebro comprobados (0 rotos), description contada, guardarraíl verde y sync con identidad OK. Pendiente el criterio 5, que necesita reiniciar OpenCode.
+
+**Rollback:** revertir `3c3b203`, `eec0798` y `359f0f0` y volver a correr el sync. `AGENTS.md:51` sigue siendo válido sin cerebro (dice "si existe").
+
+<a id="sec-sdd-fuera-2026-09-25"></a>
+## 2026-09-25 — Fuera sdd-lite: el plan no produce specs
+
+**Qué:** (1) `PLAN-TECNICO.md` pierde la sección "Persistencia como spec" (umbral canónico, formato, topes, numeración, autoría, ciclo de vida) y conserva la plantilla de plan de 9 secciones. (2) `plan.md` deja de anunciar la spec: el bullet de "Al entregar el plan" y el ítem 6 de su DoD se **reemplazan** por la regla barata — si el cambio dura más de una sesión o va entre 2+ agentes, la entrega trae la entrada de changelog con sus criterios de aceptación y, si hubo decisión de arquitectura no trivial, el ADR en `docs/adr/`; `auditor.md` deja de listar "specs" entre lo que puede editar. (3) Las skills dejan de citar el sistema: fuera el gate "sin spec → BLOQUEADO" de `calidad-cierre` (sus criterios se leen del plan o se acuerdan en la puerta), `documentacion` pierde la fila de `docs/specs/` y su description gatilla con "guía, tutorial, taller, manual" (`docs/guias/`, nunca un plan), y `contexto-proyecto` + `TOKEN-SAVING.md` pierden sus referencias. (4) `AGENTS.md:27` ensancha la fila de ruteo a "READMEs, ADRs, guías, tutoriales". (5) Los topes salen de la spec 001 y viven en `docs/harness/presupuestos.md`, que el guardarraíl exige que exista y cita como fuente única. (6) El guardarraíl pierde `$MAX_SPEC` y el bloque "6) Specs del repo": quedan 9 bloques, renumerados. (7) `pipeline.md` y `estado-actual.md` reflejan el flujo nuevo y registran 3 fricciones resueltas.
+
+**Por qué:** al pedir una guía técnica para un taller, el umbral canónico la convirtió en una spec de la tarea: el sistema de specs capturaba peticiones de documentación. Además, tantas specs acabarían saturando el contexto de cada sesión, y el project-brain ya cubre la memoria del proyecto. Nada lo reemplaza como sistema: la intención de cada cambio vive en el changelog (que ya se mantenía con rigor) y las decisiones de arquitectura en `docs/adr/`, que es la convención que ya definía la skill `documentacion`.
+
+**Criterios de aceptación:** (1) `grep` de `docs/specs|umbral canonico|MAX_SPEC` en agentes, skills y `AGENTS.md` → 0 coincidencias (salvo el puntero genérico a la plantilla de plan y los falsos positivos de "Figma specs"/vendor). (2) Guardarraíl exit 0 con 9 bloques numerados, `AGENTS.md` en 60 líneas y agentes ≤310. (3) `sync-global.ps1` exit 0 con identidad OK. (4) Una petición de "guía técnica / taller / tutorial" produce un `.md` en `docs/guias/`, no una spec ni un plan. (5) `docs/harness/presupuestos.md` existe y el guardarraíl lo cita como fuente única.
+
+**Verificación:** las 7 cifras de `presupuestos.md` coinciden con las constantes del script; los enlaces `.md` de `docs/` resuelven; `sync-global.ps1` exit 0 con `skills=34 agentes=8 commands=1`; los fixtures de permisos siguen fallando como deben. Pendiente: reiniciar OpenCode y comprobar los criterios 3 y 4 en la TUI.
+
+**Rollback:** revertir los 6 commits del lote (`55a0ac8`, `5ff16a8`, `342ea02`, `36c2db7`, `af4dcd8`, `0d503b7`) y este. Los specs 001-003 permanecen en el repo como archivo, así que nada se pierde.
+
+<a id="sec-external-allowlist-2026-09-25"></a>
+## 2026-09-25 — `external_directory`: allowlist del harness + reglas de contexto
+
+**Qué:** (1) en `~/.config/opencode/opencode.jsonc` (global, **sin commit**), `permission.external_directory` pasa de `{"*": "ask"}` a `{"*": "ask", "~/.config/opencode/**": "allow", "~/.local/share/opencode/**": "allow"}` — el orden importa: gana la última regla y la config del usuario se fusiona después que las allowlists internas de opencode. (2) `AGENTS.md` §Tokens y contexto gana, **en la misma línea** (sin añadir líneas: el tope es 60/60), dos reglas: *"Ante la duda: lee este archivo y `docs/project-brain/INDEX.md` (si existe) antes de preguntar o asumir"* y *"Fuera del repo: no explores rutas externas salvo que la tarea nombre la ruta o el repo no responda"*. (3) `estado-actual.md` refleja la política vigente.
+
+**Por qué:** el `*` ask global **anulaba** las allowlists internas de opencode (temp, skills descubiertas, referencias globales, `tool-output`), así que cada delegación a subagente disparaba el permiso por rutas que el harness ya tenía permitidas. Verificado contra el schema (`opencode.ai/config.json`), la doc de permisos y el código de opencode v1.18.32: un subagente hereda las reglas y el estado `approved` del primario (no reinicia), `once` no cachea y `always` sí. La allowlist de las 2 carpetas ya era la decisión de `docs/specs/001:92`; lo que faltaba era volver a ella.
+
+**Verificación:** el JSONC sigue válido; el efecto requiere reiniciar OpenCode (la config no es hot-reload). Pendiente el humo: (a) un subagente que lee `~/.config/opencode/**` o `~/.local/share/opencode/**` no pregunta; (b) una lectura fuera de esas dos rutas sí pregunta. Si aún aparece algún permiso (p. ej. el temp del harness), se mide antes de ampliar la allowlist.
+
+**Rollback:** en `opencode.jsonc`, dejar `permission.external_directory` como `{"*": "ask"}` (o restaurar las 4 reglas de la entrada del 2026-09-24). Requiere reiniciar OpenCode.
+
+<a id="sec-roles-2026-09-24"></a>
+## 2026-09-24 — Roles reales de agente: invocabilidad, permisos `task` y roster
+
+**Qué:** (1) `ui-ux` y `backend-expert` pasan de `mode: primary` a `mode: subagent` (un primary no es invocable por `Task`) y `AGENTS.md` los mueve al roster de subagents: quedan 2 primarios (`build`, `plan`) y 7 subagents. (2) Cada agente declara `permission.task`: `build` con los 7, `plan` con `backend-expert`/`auditor`/`explore` (pre-flight de seguridad, arquitectura o contratos), `ui-ux`/`backend-expert` con `explore`, y los 4 subagents con `task: deny` (sin `task` el default documentado es `allow`). (3) Textos alineados a esa topología: `build` gana el mapa de orquestación (reemplaza el bloque que repetía el Paso 0, −1 línea), los subagents "reportan para que…" en vez de "se delegan a…", 3 listas de skills fijas pasan a puntero a la tabla, y `tdd` ya no manda a un primary. (4) `.gitattributes` fija `eol=lf` para `*.md`, `*.ps1`, `*.json`, `*.jsonc`. (5) Guardarraíl: 6 checks nuevos.
+
+**Por qué:** auditoría de los `.md` de agentes: "delega a X" no se podía cumplir (X era primary y `Task` no lo ofrece), ningún primary declaraba a quién puede lanzar, 22 archivos del harness tenían finales mezclados en la carpeta de trabajo y el contrato de LF dependía del `git config` de cada máquina.
+
+**Verificación:** guardarraíl verde (skills=34, AGENTS.md=60, agentes=308/310); fixture con 5 agentes en conflicto → los 6 checks fallan nombrando el archivo (exit 1) y `explore` se acepta como built-in; `git ls-files --eol` → índice y carpeta de trabajo 100% LF tras normalizar, sin diff de contenido.
+
+**Rollback:** revertir los 4 commits y borrar `.gitattributes`. Reiniciar OpenCode para que cargue los roles nuevos.
+
+<a id="sec-sync-failclosed-2026-09-24"></a>
+## 2026-09-24 — Sync fail-closed: purga auditable, espejo del repo y prune del log
+
+**Qué:** (1) `sync-global.ps1` ahora tiene un **dry-run**: enumera qué se borraría en `skills/`, `agents/` y `commands/` y **para** si hay algo (se aprueba con `-ForcePurge`). (2) La copia usa `/MIR` solo en esas 3 carpetas, así que borra lo obsoleto sin tocar `opencode.jsonc`, `tui.json`, `plugins/`, `package.json` ni `node_modules/`. (3) Verifica que el global sea **espejo del repo**: los mismos `SKILL.md` con el mismo contenido (compara texto normalizado, CRLF/LF no cuenta) y el mismo número de archivos; si difieren o sobran → `exit 1`. (4) Trunca `opencode.log` si supera 10 MB. Antes copiaba con `/E` (no borraba nunca) y solo validaba el frontmatter del global.
+
+**Por qué:** revisión de fugas del plan. El `/MIR` sin dry-run podía borrar algo tuyo y el global podía divergir del repo en silencio (una copia vieja sombreando la nueva, la misma clase de fallo que el incidente de `inicio-proyecto` del 15-09). Los 8 WARN `duplicate skill name` que aparecen en cada arranque son inofensivos **porque** el check garantiza identidad.
+
+**Verificación:** corrida sin `-ForcePurge` con un archivo basura en el global → lo lista y para, el archivo sobrevive; corrida con `-ForcePurge` → lo borra y revalida (`skills=34`, identidad OK). La primera versión del parser falló (robocopy en español escribe `*Directorio EXTRA`, no `*deleting`) y borró sin pedir permiso: lo detectó la propia prueba y se corrigió antes de commitear. `opencode.jsonc`, `tui.json`, `plugins/` y `node_modules/` verificados intactos. Log: 25,3 MB respaldados en `opencode-historico-2026-07-03_a_2026-09-24.log.bak` y truncados a 0 MB.
+
+**Rollback:** `git revert` del commit. El `-ForcePurge` es opt-in: sin él el sync nunca borra.
+
+<a id="sec-check-skills-2026-09-24"></a>
+## 2026-09-24 — Guardarraíl: las skills tampoco pueden mandar a delegar en un primary
+
+**Qué:** check nuevo en `scripts/harness-budget.ps1` (bloque 2e): escanea todos los `.md` de `.opencode/skills/` (incluido `references/`) y falla si alguna skill instruye a lanzar a un primary (`build`, `plan`) con verbos de delegación/invocación/consulta. El patrón no incluye "cambiar a" a propósito: "propón al usuario cambiar a `plan`" es legal y no debe dispararse.
+
+**Por qué:** el guardarraíl ya auditaba a los agentes pero no a las skills, y una skill podía volver a mandar "delega en `plan`" y fallar en runtime sin que ningún check lo detectara (pasó con `tdd` el 24-09).
+
+**Verificación:** fixture con 2 casos rotos (`SKILL.md` con "delega en `plan`" y una `reference` con "delegar en `build`") → 2 violaciones nombrando archivo; 3 casos legales ("delega en `ui-ux`", "programar → `build`", "propón al usuario cambiar a `plan`") → 0 violaciones; repo real → exit 0. No consume presupuesto (vive en `scripts/`).
+
+**Rollback:** `git revert` del commit.
+
+<a id="sec-global-perms-2026-09-24"></a>
+## 2026-09-24 — Permiso del harness: `external_directory` a `ask`
+
+**Qué:** en `~/.config/opencode/opencode.jsonc` (global, **sin commit**), `permission.external_directory` pasa a `{"*": "ask"}` y se borran las 4 reglas `allow` que cubrían `~/.config/opencode/*` y `~/.local/share/opencode/*`. Pendiente para después de los humos: `"logLevel": "WARN"`, que elimina del log las líneas `INFO` con los comandos bash.
+
+**Por qué:** con `allow`, un agente con `edit: allow` podía modificar el harness global sin preguntar. Se conserva `ask` (no `deny`) porque el propio `sync-global` necesita esa escritura. **Limitación conocida:** `ask` es un gate suave — el modo auto-approve lo convierte en `allow` automático. Para un gate duro habría que `deny` y abrir permisos puntuales.
+
+**Verificación:** el JSONC sigue válido y arranca; el efecto solo se ve al reiniciar OpenCode (la config no es hot-reload). El backup del log se hizo antes de aplicar el prune.
+
+**Rollback (literal):** restaurar en `permission.external_directory` las 4 reglas:
+
+```jsonc
+"external_directory": {
+  "*": "ask",
+  "~/.config/opencode/*": "allow",
+  "~/.config\\opencode\\*": "allow",
+  "~/.local/share/opencode/*": "allow",
+  "~/.local\\share\\opencode\\*": "allow"
+}
+```
+
+Y para revertir `logLevel`: borrar la línea `"logLevel": "WARN",`.
+
+<a id="sec-failclosed-2026-09-23"></a>
+## 2026-09-23 — Fail-closed real en frontmatter y sync
+
+**Qué:** (1) `harness-budget.ps1` exige el `---` de cierre del frontmatter: sin él registra violación y se salta ese archivo (antes un `SKILL.md` sin cierre pasaba si encontraba `name:` y `description:` en el cuerpo). (2) `sync-global.ps1` hace `throw` cuando falta `scripts\harness-budget.ps1` (antes `Write-Warning` y sincronizaba a ciegas, contradiciendo el criterio de spec 001).
+
+**Por qué:** revisión del lote de 12 commits (auditor + revisión propia) encontró dos *fail-open* reales: el frontmatter tolerante y el sync degradado. El primero permitía que una skill se midiera con metadatos que el loader no lee.
+
+**Verificación:** fixture con `SKILL.md` sin cierre → exit 1 nombrando el archivo; copia del sync en un temporal sin `scripts/` → `throw` con exit 1; guardarraíl real verde (skills=34, AGENTS.md=60) y `sync-global.ps1` exit 0.
+
+**Rollback:** revertir el commit (vuelve el parser tolerante y el sync con warning).
+
+<a id="sec-comunicacion-2026-09-23"></a>
+## 2026-09-23 — Skill `comunicacion-asertiva` (doctrina de redacción, densidad y diagramas)
+
+**Qué:** nueva skill obligatoria en toda tarea (junto a `uso-eficiente`): núcleo de ~26 líneas (modo tarea con veredicto, **modo respuesta** para preguntas puras sin etiquetas, redacción sencilla, diagramas ASCII/tablas con 3+ elementos, **override** `modo detallado` / `modo resumen`, y regla de **precedencia**: si contradice a `AGENTS.md`, gana `AGENTS.md`) + `references/DOCTRINA.md` bajo demanda (escalera de densidad, plantillas, glosario de diagramas ASCII y el ejemplo malo vs bueno tomado de la auditoría real). `AGENTS.md` conserva los límites duros y añade el puntero + las dos reglas de fallback; `uso-eficiente` §4 pasa a puntero para dejar **fuente única**. Guardarraíl: +2 probes (respaldo del modo respuesta) y +3 checks fail-closed (puntero en `AGENTS.md`, límite duro "Maximo 5 bullets" solo en `AGENTS.md`, la skill declara la precedencia).
+
+**Por qué:** las respuestas salían en 6+ párrafos sin veredicto ni densidad. La regla existía en `AGENTS.md` y en `uso-eficiente` (dos fuentes, sin doctrina); el usuario pidió una skill "siempre activa" — recordatorio estructural: lo único siempre inyectado es `AGENTS.md` + las `description`, por eso los límites duros se quedan en `AGENTS.md` y la doctrina vive en la skill.
+
+**Verificación:** guardarraíl verde (skills=34); los 3 checks nuevos fallan en el fixture (exit 1) y el SSOT ya mordió en la primera pasada (el núcleo repetía el límite duro; se corrigió). Sin verificación automática del formato de salida: un assert con `opencode run` costaría ~12,5k tokens y el ruido no permite medirlo (ver spec 001).
+
+**Rollback:** revertir los 3 commits. Coste: +45 tok fijos/sesión + ~310 tok por tarea; `DOCTRINA.md` solo se lee bajo demanda.
+
+<a id="sec-triggers-2026-09-23"></a>
+## 2026-09-23 — Gatillos de patrones + probes de trigger (versión ligera)
+
+**Qué:** (1) `arquitectura` gana 3 keywords de disparo en su `description` (`pool de conexiones`, `proxy`, `reintentos`) y una sección de 3 líneas que apunta a `references/PATRONES.md`: tabla de 8 patrones con "dónde vive / cuándo sí / cuándo NO" (Factory, Builder, Specification, Strategy, Singleton, Prototype, Pool, Proxy), criterio de **módulo complejo** (2+ señales → el agente propone el patrón y espera OK; <2 señales o sin ganancia clara → no patrón) y 2 ejemplos (Pool en Python, Proxy en TypeScript). (2) La fila de `AGENTS.md` pasa a "| Capas, features, dominio, patrones (pool, proxy) |" (net-zero líneas). (3) `singleton` añadido a la description de `convenciones-frontend`: el probe lo destapó, no estaba en ningún gatillo pese a que el cuerpo de la skill lo mentiona. (4) `scripts/trigger-probes.json` (7 frases reales → skill esperada) validado por el guardarraíl en fail-closed: cada keyword debe existir en la `description` de la skill o en su fila de la tabla.
+
+**Por qué:** 2 misses del gate observados en una sesión (review de UI y "auditar el harness" sin señal). El análisis de necesidad descartó el catálogo amplio: el modelo ya conoce los patrones y su valor es restraint, no capacidad; y su coste invisible era quemar el headroom de `description` (45) y `AGENTS.md` (60/60).
+
+**Verificación:** guardarraíl verde (fail-closed: fixture sin `trigger-probes.json` → violación; probe con keyword inexistente → violación, el válido pasa); `+24 tokens/sesión` estimados (≈0,2%), por debajo del ruido de medición (±1-2k), por eso sin medición nueva. Smoke pendiente: reiniciar TUI y pedir "quiero un pool de conexiones reutilizable" → el gate debe declarar `arquitectura` y **proponer** el patrón.
+
+**Rollback:** revertir los 3 commits. Disparador acordado para ampliar: 2-3 features backend con `timeout`/`retry`/`pool` ausentes en 2 semanas → reactivar el catálogo amplio con esa evidencia.
+
+<a id="sec-remediacion-2026-09-22"></a>
+## 2026-09-22 — Remediación de auditoría (4 MAJOR + recorte de tokens)
+
+**Qué:** (1) `scripts/harness-budget.ps1` pasa a **fail-closed**: sin `name:`/`description:` en el frontmatter la skill no se mide ni se anuncia; `name` debe coincidir con la carpeta; el routing se valida **bidireccionalmente** (cada skill del repo con backticks en la tabla; cada token de la tabla existe como skill, agente o `customize-opencode`); los enlaces `reference/` y `references/` se comprueban (sin falsos positivos por ancla `#`). (2) `sync-global.ps1` cuenta skills recursivamente (`skills=33`, antes 32 por `informe-docx` anidada). (3) Allowlist de permisos en el global: `external_directory` = allow solo `~/.config/opencode` y `~/.local/share/opencode`, resto `ask`. (4) Routing UI: el agente `ui-ux` sigue la tabla, el detector corre **una pasada** con el launcher local (`.cmd detect <archivo>`, sin `npx`) y el veredicto de review lo da `frontend-design-review` (anti-doble-review); wrapper `impecable` y `references/CLI.md` sin `npx`; `impecable` pasa a obligatoria en la fila de cambio UI visible. (5) Tabla: `auditor` sale de la columna de skills, fila 25 compactada ("carga solo la que aplique"), fila nueva "Auditoría del harness → `customize-opencode`", `build` delega refactor/deuda/performance en `quality`. (6) Tokens: 10 `description` recortadas (6 outliers ≥40 → ≤30; 3 manuales → ≤15) y `uso-eficiente` 65 → 39 líneas.
+
+**Por qué:** la auditoría del 2026-09-22 encontró 4 MAJOR (validador que pasaba en abierto con frontmatter ausente, routing que mezclaba agentes con skills, contradicción tabla↔agente↔wrapper en el flujo Impeccable, `external_directory: allow *`) y ~33% de cada sesión en overhead de metadata del harness. El guardarraíl se endureció primero para que los cambios de routing siguientes fueran verificables.
+
+**Verificación:** guardarraíl en verde (`AGENTS.md=60`, agentes=301, skills=33); fixture con 3 violaciones (frontmatter sin `name:`, `name`≠carpeta, token inexistente en la tabla) → exit 1; `sync-global.ps1` exit 0; A/B con smoke v2 (mediana n=3, mismo día): **13.042 → 12.477 = −565 tokens/sesión (−4,3%)**; `opencode.jsonc` validado como JSON. Medición global-only v2 no completada (corrida abortada).
+
+**Rollback:** revertir los commits; para el global, restaurar `external_directory: {"*": "allow"}` en `~/.config/opencode/opencode.jsonc`. Requiere reiniciar OpenCode (la config no es hot-reload).
+
+<a id="sec-fdr"></a>
+## 2026-09-21b — Skill de review UI adoptada (`frontend-design-review`)
+
+**Qué:** vendorizada y adaptada la skill `frontend-design-review` de `microsoft/skills` (MIT): review estructurado de UI con 3 pilares (frictionless, quality craft, trustworthy), compliance de design system, scoring y formato de salida en `references/`.
+
+**Por qué:** era la única candidata del catálogo `VoltAgent/awesome-agent-skills` con un eje que el harness no cubría. Descartadas: `anthropics/frontend-design` (redundante con `impeccable`), `openai/frontend-skill` (no existe en `openai/skills@main`), `google-labs-code/design-md` (redundante y requiere Stitch MCP).
+
+**Adaptaciones locales:** `description` a 26 palabras (presupuesto ≤45); WCAG **2.2 AA** canónico en lugar de 2.1 (así el guardarraíl sigue en verde); se **eliminó el bloque de creación creativa** (duplicaba `impeccable`) y quedó como review puro (`SKILL.md` 116 líneas); regla **anti-doble-review** (esta skill da el formato/veredicto; `impeccable` ejecuta `shape`/`critique`/`audit`/`detect`); Figma/Storybook opcionales.
+
+**Archivos:** `.opencode/skills/frontend-design-review/{SKILL.md,references/*.md}` (nuevos) · `scripts/harness-budget.ps1` (exención vendor) · `AGENTS.md` (ruteo en la fila de cambio visible) · `.opencode/skills/ui-ux/SKILL.md` (puntero) · `docs/specs/002-adopcion-frontend-design-review.md`.
+
+**Verificación:** `harness-budget.ps1` en verde y `sync-global.ps1` exit 0 (tras reiniciar, la skill queda disponible en el global).
+
+**Rollback:** borrar la carpeta `frontend-design-review`, revertir el commit, quitar la exención del guardarraíl y la mención en `AGENTS.md`.
+
+**Riesgos:** solape con `impeccable` (mitigado por la regla anti-doble-review); divergencia con upstream (mantenimiento manual); +1 `description` fija por sesión (~31 palabras).
+
+<a id="sec-ui-routing"></a>
+## 2026-09-21 — Routing UI sin doble activación (A+D) y medición
+
+**Qué:** (D) la tabla del Skill Gate separa UI de código vs cambio visible: fila "UI: codigo, componentes, estilos (sin cambio visible)" → `convenciones-frontend`; fila "Cambio UI visible o interactivo" → `ui-ux`, con `convenciones-frontend`, `accesibilidad` e `impecable`+`impeccable` como opcionales. (A) punteros cruzados de una línea entre `convenciones-frontend` y `ui-ux`, y `description` de `convenciones-frontend` orientada a código ("para cambios visibles usa ui-ux").
+
+**Por qué:** antes las dos filas disparaban juntas en todo cambio visible (doble activación). La hipótesis era ahorro de tokens; la medición la descartó.
+
+**Medición** (smoke de tarea UI con `opencode run --format json`, mediana n=3): **13.211 → 13.178 = −33 (−0,25%)**, dentro del ruido. Conclusión: no se justifica fusionar `convenciones-frontend` + `ui-ux` ni fragmentar la cadena; el coste dominante no está en esas skills. El cambio queda por claridad de routing, no por ahorro.
+
+**Archivos:** `AGENTS.md` (2 filas), `.opencode/skills/convenciones-frontend/SKILL.md`, `.opencode/skills/ui-ux/SKILL.md`.
+
+**Verificación:** `scripts/harness-budget.ps1` en verde (AGENTS.md=59, agentes=303, skills=32); `sync-global.ps1` exit 0.
+
+**Rollback:** revertir el commit correspondiente (no hay cambios fuera del repo).
+
+<a id="sec-0"></a>
+## 2026-09-19b — Notificaciones de escritorio vía plugin (Windows Terminal)
+
+**Qué:** plugin global que emite toasts nativos de Windows en dos eventos: sesión principal completada (`session.idle`) y pedido de permiso (`permission.asked` de la API v2 / `permission.updated` de la v1).
+
+**Por qué:** OpenCode delega la notificación al terminal emitiendo **OSC 777** (detecta `WT_SESSION`). Windows Terminal 1.24 (única versión instalada, sin Preview) ignora esa secuencia: el soporte existe solo en `main` de microsoft/terminal (PR #20012, merged 2026-06-04, issue #7718), no llegó a ningún release y cuando salga exigirá `compatibility.allowOSC777: true` (default `false`). Los sonidos sí funcionan porque se reproducen localmente (miniaudio vía `opentui.dll`). Descartados foco (WT soporta DECSET 1004) y config (`notifications: true` ya estaba activo).
+
+**Archivo** (global, no versionado; no lo toca `sync-global.ps1`):
+
+`C:\Users\damez\.config\opencode\plugins\notify-windows.js`
+
+<details><summary><b>Código del plugin (copiar para restaurar)</b></summary>
+
+```js
+/**
+ * Notificaciones de escritorio nativas de Windows para OpenCode.
+ *
+ * Por que existe: OpenCode delega las notificaciones al terminal (OSC 777).
+ * Windows Terminal 1.24 no soporta esa secuencia (el soporte esta en main,
+ * PR microsoft/terminal#20012, y cuando salga exigira
+ * compatibility.allowOSC777=true), asi que el toast nativo nunca aparece.
+ * Este plugin emite el toast por WinRT y solo cuando el terminal que hospeda
+ * la sesion no esta en primer plano.
+ *
+ * Eventos cubiertos: fin de sesion principal (session.idle) y pedidos de
+ * permiso (permission.asked de la API v2 / permission.updated de la v1).
+ */
+
+import { spawn } from "node:child_process";
+
+// AppID de PowerShell: permite mostrar el toast sin instalar ni registrar nada.
+const APP_ID =
+  "{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\\WindowsPowerShell\\v1.0\\powershell.exe";
+
+const PS_SCRIPT = `
+$ErrorActionPreference = 'Stop'
+Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+public class FgWin {
+  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+}
+'@
+$handle = [FgWin]::GetForegroundWindow()
+$fgPid = 0
+[void][FgWin]::GetWindowThreadProcessId($handle, [ref]$fgPid)
+$fg = (Get-Process -Id $fgPid -ErrorAction SilentlyContinue).ProcessName
+if ($fg -and $env:OC_TERM_PROC -and $fg -match $env:OC_TERM_PROC) { exit 0 }
+try {
+  [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType=WindowsRuntime] | Out-Null
+  [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType=WindowsRuntime] | Out-Null
+  $template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
+  $texts = $template.GetElementsByTagName('text')
+  $null = $texts.Item(0).AppendChild($template.CreateTextNode($env:OC_NOTIFY_TITLE))
+  $null = $texts.Item(1).AppendChild($template.CreateTextNode($env:OC_NOTIFY_BODY))
+  $toast = [Windows.UI.Notifications.ToastNotification]::new($template)
+  [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($env:OC_APP_ID).Show($toast)
+} catch {
+  exit 1
+}
+`;
+
+// Proceso del terminal que hospeda esta sesion: si esta en primer plano, no molestar.
+const TERM_PATTERN = (() => {
+  const names = [];
+  if (process.env.WT_SESSION) names.push("WindowsTerminal");
+  if (process.env.WEZTERM_EXECUTABLE) names.push("wezterm-gui");
+  if (process.env.ALACRITTY_WINDOW_ID) names.push("alacritty");
+  if (process.env.GHOSTTY_RESOURCES_DIR) names.push("ghostty");
+  if (process.env.TERM_PROGRAM === "vscode") names.push("Code");
+  if (process.env.OPENCODE_APP) names.push("OpenCode");
+  return names.join("|");
+})();
+
+function notify(title, body) {
+  try {
+    const encoded = Buffer.from(PS_SCRIPT, "utf16le").toString("base64");
+    // Spawn directo, sin detached: detached + stdio:ignore no arranca el hijo en Bun.
+    const child = spawn(
+      "powershell.exe",
+      ["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-EncodedCommand", encoded],
+      {
+        windowsHide: true,
+        stdio: ["ignore", "ignore", "pipe"],
+        env: {
+          ...process.env,
+          OC_NOTIFY_TITLE: title,
+          OC_NOTIFY_BODY: body,
+          OC_APP_ID: APP_ID,
+          OC_TERM_PROC: TERM_PATTERN,
+        },
+      },
+    );
+    let stderr = "";
+    child.stderr?.on("data", (data) => {
+      stderr += String(data);
+    });
+    child.on("error", () => {});
+    child.on("exit", (code) => {
+      if (code !== 0) console.log("[notify-windows] fallo al notificar:", code, stderr.slice(0, 300));
+    });
+  } catch {
+    // Una notificacion nunca debe romper la sesion.
+  }
+}
+
+export const WindowsNotifyPlugin = async () => {
+  console.log("[notify-windows] plugin cargado");
+
+  // sessionID -> parentID: permite ignorar el done de sesiones hijas (subagentes).
+  const parents = new Map();
+
+  return {
+    event: async ({ event }) => {
+      const props = event?.properties ?? {};
+
+      if (event?.type === "session.created" || event?.type === "session.updated") {
+        if (props.sessionID) parents.set(props.sessionID, props.info?.parentID);
+        return;
+      }
+
+      if (event?.type === "session.deleted") {
+        parents.delete(props.sessionID);
+        return;
+      }
+
+      if (event?.type === "session.idle") {
+        if (parents.get(props.sessionID)) return; // subagente: el done del principal llega aparte
+        notify("OpenCode", "Sesion completada");
+        return;
+      }
+
+      if (event?.type === "permission.asked" || event?.type === "permission.updated") {
+        const kind = props.permission ?? props.type ?? "una herramienta";
+        notify("OpenCode", `Pide permiso para: ${kind}`);
+      }
+    },
+  };
+};
+```
+
+</details>
+
+**Comportamiento**
+- Solo notifica si el terminal que hospeda la sesión no está en primer plano (detecta el proceso por env: `WT_SESSION` → `WindowsTerminal`, más WezTerm/Alacritty/Ghostty/VS Code/app OpenCode).
+- Ignora el `session.idle` de sesiones hijas (subagentes) con el `parentID` cacheado de `session.created`/`session.updated`.
+- Toast WinRT vía PowerShell con AppID de PowerShell (sin instalar módulos); se lanza detached, no bloquea la sesión.
+- No reemplaza los sonidos de la entrada anterior: los complementa.
+
+**Verificación** (realizada)
+
+| Prueba | Resultado |
+| --- | --- |
+| Toast WinRT desde PowerShell | Aparece (confirmado por el usuario) |
+| Guarda de foco con `foreground=WindowsTerminal` | `guardMatch=True` (no molesta con el terminal en foco) |
+| Carga en sesión real (`opencode run`) | `[notify-windows] plugin cargado` |
+| E2E en servidor persistente (`serve` + `run --attach`) | `start` → `shown: Sesion completada`, exit 0 |
+
+Dos trampas encontradas en las pruebas (y su efecto en el código final):
+- `spawn` con `detached: true` + `stdio: "ignore"` **no arrancaba el hijo** en el runtime Bun (sin error ni log); con spawn directo funciona.
+- `opencode run` headless: el proceso termina al acabar el turno y mata el árbol de procesos, así que el toast no alcanza a mostrarse; no aplica a la TUI (servidor vivo). Tampoco hay sonidos en `run` (son de la TUI).
+
+**Resultado (2026-09-19, tras reiniciar la TUI):** con el terminal fuera de foco, un prompt de permiso real disparó sonido `permission` + toast "Pide permiso para: bash" (confirmado por el usuario). El intento anterior no era prueba válida: el plugin aún no estaba cargado (sin reinicio) y el prompt salió con la terminal en primer plano. La ruta `done` (`session.idle`) quedó verificada en el E2E de `serve` + `run --attach`; en la TUI solo falta confirmarla saliendo a mitad de un turno.
+
+**Rollback:** borrar `notify-windows.js`; reiniciar OpenCode.
+
+**Riesgos y límites**
+- El `console.log` de init aparece en la salida de `opencode run` (igual que el ejemplo oficial); es invisible en la TUI.
+- Si el terminal pasa a soportar OSC 777 (WT 1.26 con el flag, WezTerm), el plugin duplicaría la notificación nativa: retirarlo o desactivar `attention.notifications`.
+- Requiere PowerShell 5.1 + WinRT (Windows 10/11 de escritorio); `opencode serve` puro no inicializa el plugin hasta que hay sesión.
+- En modo headless (`opencode run`) el toast puede no alcanzar a verse porque el proceso sale antes; los sonidos de atención tampoco existen ahí.
+
+**Evidencia:** `~/.config/opencode/plugins/notify-windows.js` · `@opencode-ai/plugin/dist/index.d.ts:225` (hook `permission.ask`) · SDK v2 `types.gen.d.ts:1128,1225` (`permission.asked`, `session.idle`) · PR microsoft/terminal#20012 / issue #7718 · binario 1.18.31 (OSC 777 + detección `WT_SESSION`).
+
+<a id="sec-1"></a>
+## 2026-09-19 — Sonidos de atención en la TUI
+
+**Qué:** habilitar los sonidos nativos de OpenCode para `done`, `permission`, `question`, `error` y `subagent_done`, más notificaciones de escritorio cuando la terminal está en segundo plano.
+
+**Por qué:** pedido del usuario (sonido al terminar una tarea y al pedir un permiso). Se descartó el truco de escribir `\a` en `AGENTS.md`: la TUI renderiza markdown y los caracteres de control no llegan al terminal; el mecanismo soportado es `attention` (desactivado por defecto).
+
+**Config aplicada** (archivo global, no versionado en el repo; no lo toca `sync-global.ps1`, que solo copia skills/agents/commands):
+
+`C:\Users\damez\.config\opencode\tui.json`
+```json
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "attention": {
+    "enabled": true,
+    "notifications": true,
+    "sound": true,
+    "volume": 0.5,
+    "sound_pack": "opencode.default"
+  }
+}
+```
+
+**Cómo funciona**
+- Pack builtin `opencode.default`: mp3 embebidos en el binario y reproducidos in-process (miniaudio vía `opentui.dll`; backends WASAPI/DirectSound/WinMM). No usa reproductores externos.
+- `notifications: true` muestra el banner del sistema solo cuando la terminal está blurred; el sonido suena siempre que el evento dispare.
+- Aplica solo a la TUI: `opencode run` no reproduce sonidos.
+
+**Verificación** (tras reiniciar OpenCode; la config TUI se lee al arrancar)
+
+| Prueba | Cómo | Esperado |
+| --- | --- | --- |
+| Permiso | pedir un comando bash no allowlisteado (`"bash": {"*": "ask"}`) | suena `permission` |
+| Fin de turno | completar cualquier respuesta | suena `done` |
+| Notificación | mandar la terminal a segundo plano antes del evento | banner del sistema |
+
+**Resultado (2026-09-19):** los sonidos funcionan; el banner nunca aparece. Causa raíz y solución en la entrada siguiente.
+
+**Rollback:** borrar `tui.json` o poner `attention.enabled: false`; reiniciar la TUI.
+
+**Riesgos y límites**
+- Si `opentui.dll` no carga, la TUI queda en silencio y loguea `failed to create tui audio`; cambiar a `.wav` no ayuda (mismo engine).
+- No hay mute por evento en `tui.json`: `question` y `error` también suenan.
+- `volume: 0.5` es punto de partida (default del schema: 0.4); se ajusta en una línea.
+
+**Evidencia:** `~/.config/opencode/node_modules/@opencode-ai/plugin/dist/tui.d.ts:170-216,323-333` · docs `https://opencode.ai/docs/tui/` (sección Attention) y `https://opencode.ai/docs/config/` (tui.json global) · binario 1.18.31 (`opencode-ai/package.json:9`).
+
+## 2026-10-07 — Auditoría de los 8 subagentes (roles, permisos, handoffs)
+
+**Qué cambió:** los 8 `.md` de `.opencode/agents/` se auditaron con 6 lentes (fronteras, privilegios, grafo de delegación, valor real, cobertura, presupuesto). Resultado: **0 agentes con solape grave**, **1 bypass de escritura**, **3 prescripciones genéricas** y **3 handoffs incompletos**. **No se creó ningún agente nuevo**.
+
+- **BLOCKER corregido:** `auditor` es de solo lectura pero `bash: "git diff*": allow` permitía `git diff --output=<archivo>`, que escribe. Ahora deniega `*--output*`, `git apply`, `git checkout`, `git restore` y `git stash`.
+- **`build`** relajó la prescripción de capas `domain/application/adapters/infrastructure` y del interceptor `traceId`: existen en Node anidado, no en Django, Laravel o Angular. Añadió criterios de aceptación observables y un tope de no sobre-entregar.
+- **`debugger`** ya no deriva el hueco de seguridad solo a `auditor` (que no implementa el fix): el fix va a `build` y la revisión independiente a `auditor`.
+- **`quality`** pide métricas de rendimiento solo cuando la tarea es `Optimize`.
+- **`ui-ux`** trata el motion como opcional (solo si aporta valor) y escala la severidad al impacto.
+- **`backend-expert`** modela dominio, invariantes y contratos en lugar de duplicar el plan de `plan`; su `description` ya no promete planes.
+- **`tester`** queda delimitado a comportamiento/E2E; la revisión visual es de `ui-ux`.
+- **Presupuesto:** 310 → 316 líneas; tope total 330 → **350**. `MAX_AGENT` sigue en 45 y ningún archivo lo excede.
+
+**Guardarraíl:** checks nuevos, todos con fixture negativo probado.
+- **2b** — la allowlist de `task` no puede nombrar a un primary (`build → plan` se rechaza).
+- **2f** — el grafo de delegación debe ser **acíclico** (`ui-ux ↔ quality` se rechaza).
+- **2g** — un agente que se declara de **solo lectura no puede tener vector de escritura** en bash (`auditor` sin `*--output*: deny` se rechaza).
+- **11b** — detecta **caracteres de control invisibles** (BEL/BS/NUL) en `.md/.json/.ps1/.js`; el escaneo por `-Include` también se acotó por extensión porque `-LiteralPath` lo ignoraba y colaba binarios.
+
+**Smokes en runtime** (`opencode run --agent`, modelo `opencode-go/deepseek-v4.1-flash`):
+
+| Agente | Resultado |
+| --- | --- |
+| `plan` | PASS — carga y responde sin editar |
+| `backend-expert` | PASS — invariantes y referencias por id, **sin plan numerado** |
+| `quality` | PASS — omite `performance` y `code-clue` justificando el motivo |
+| `debugger` | PASS — marca la hipótesis como no verificada y cita `seguridad` |
+
+`--agent` verificado como efectivo (`> plan · deepseek-v4.1-flash`).
+
+**Corrección posterior (mismo día):** la primera escritura de esta entrada se hizo con un here-string doble de PowerShell y los backticks de Markdown se interpretaron como escapes: el archivo quedó con 7 BEL, 6 backspace y 1 NUL, y letras comidas (`uditor`, `uild`, `ester`). Se reescribió desde un archivo intermedio y el check **11b** evita que vuelva a pasar. Además se corrigieron `limitesKnown` en `backend-expert`, `hallajes` en `tester`, `impecable` → `impeccable` en `ui-ux`, las fechas 10-06 → 10-07 y el orden de los bloques 2d/2e/2f/2g.
+
+**Presupuesto y docs:** `docs/harness/presupuestos.md` refleja 350/45 · nuevo informe `docs/harness/auditoria-subagentes.md` con hallazgos, fronteras, permisos, guardarraíl y smokes · `estado-actual.md` actualizado a 316/350.
+
+**Commits:** `6601227` (mojibake) · `0c5db5b` (plugins + LF) · `9efa370` (tope 350) · `9dcff3c` (permisos de `auditor`) · `2857e1d` (límites de rol) · `920d591` (checks 2f/2g) · `52d8fc1` (docs) · `6944b41` (typos y caracteres de control) · commit de docs que reescribe esta entrada.
+
+**Riesgos y límites**
+- `sync-global.ps1` espeja `skills`/`agents`/`commands` pero **no `plugins`**: quien clone la plantilla recibe los plugins en el repo, no en el global. Decidir si se amplía el espejo o se documenta el bootstrap manual.
+- La allowlist global de `edit` de `ui-ux` sigue amplia a propósito: los globs de rutas entre frameworks son frágiles. El control es el prompt de alcance, no el permiso.
+- El bypass se verificó con ejecución real del comando, no solo leyendo el YAML: `ask` + archivo ausente. En sesión interactiva el prompt sigue apareciendo.
+
+**Rollback:** revertir los commits de la serie; el guardarraíl y los docs quedan en sus versiones previas.
+
+## 2026-10-07 — 5 skills invisibles por BOM UTF-8 (incluida `workflow`)
+
+**Qué:** 6 `SKILL.md` del repo llevaban BOM UTF-8 (`EF BB BF`) en el blob de git, heredado del andamiaje. El loader no publicaba el frontmatter de 5 de ellas: `arquitectura`, `despliegue`, `documentacion`, `observabilidad` y `workflow` (la DoD canónica). `base-datos` también tenía BOM pero sí cargaba.
+
+**Causa (empírica, con gemelos de control):** con BOM + `:` en la `description` la skill desaparece del catálogo; sin BOM o sin `:` se publica. Gemelo con BOM → FALTA; gemelo sin BOM → OK; copia con el mismo contenido en carpeta nueva → OK; con el nombre `workflow` en carpeta nueva seguía FALTA mientras la copia global conservaba el BOM (la resolución de duplicados proyecto/global la mantenía fuera).
+
+**Arreglo:** BOM fuera de los 6 archivos (byte a byte, sin tocar el resto) · check **2h** del guardarraíl (BOM prohibido en agentes, skills y commands; en verde tras el arreglo y con los 6 como fixture negativo) · `sync-global.ps1 -ForcePurge` para limpiar el global · verificación con `opencode run`: las 5 skills cargan.
+
+**Evidencia:** `git cat-file` del blob en `HEAD` → `EF BB BF` en `workflow` y `2D 2D 2D` en `accesibilidad`; carga real con `opencode run --model opencode-go/deepseek-v4.1-flash`.
+
+**Rollback:** revertir este commit y volver a sincronizar el global.
+
