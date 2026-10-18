@@ -1,0 +1,49 @@
+{
+  "permission-gate": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File hooks/pre-tool-enforcer.ps1",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "windows-notify": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "ask_question|run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File hooks/notify-windows.ps1 -Event PreToolUse",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "powershell -NoProfile -ExecutionPolicy Bypass -File hooks/notify-windows.ps1 -Event Stop",
+        "timeout": 10
+      }
+    ]
+  },
+  "tui-welcome": {
+    "enabled": true,
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "powershell -NoProfile -ExecutionPolicy Bypass -File hooks/session-start.ps1",
+        "timeout": 10
+      }
+    ]
+  }
+}
