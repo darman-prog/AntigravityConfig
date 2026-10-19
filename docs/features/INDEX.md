@@ -1,6 +1,6 @@
-﻿---
+---
 status: vigente
-last_reviewed: 2026-10-15
+last_reviewed: 2026-10-19
 ---
 
 # Registro de features implementadas
@@ -18,13 +18,21 @@ el detalle vive en la spec o tarjeta correspondiente, no en este índice.
 | Fecha | Cambio | Estado | Alcance | Registro | Evidencia |
 |---|---|---|---|---|---|
 
+## Decisiones (ADR)
+
+| Fecha | Decisión | Estado | Ámbito | Registro |
+|---|---|---|---|---|
+| 2026-09-28 | RTK como dependencia de máquina | vigente | Rendimiento/costes del harness | [ADR-001](../adr/001-rtk-dependencia-de-maquina.md) |
+| 2026-10-17 | Limitación visual de hooks en TUI de Antigravity | vigente | TUI y ciclo de vida de hooks | [ADR-002](../adr/002-limitacion-visual-hooks-tui-antigravity.md) |
+| 2026-10-17 | Desglose y contención de overhead de tokens en primer turno | vigente | Presupuesto y Prompt Caching | [ADR-003](../adr/003-desglose-overhead-tokens-primer-turno.md) |
+
 ## Reglas
 
 - Una fila por unidad funcional implementada; los micro-fixes quedan en el changelog.
-- Las tarjetas single-session son opt-in y tienen 20 líneas o menos.
-- Las feature-specs multi-sesión tienen 45 líneas o menos.
-- Si las secciones activas y cerradas superan 40 filas, mueve las cerradas antiguas a ARCHIVE.md y conserva aquí solo el resumen.
+- Toda feature de una sesión se registra con una **tarjeta** (25 líneas o menos); una feature multi-sesión, con una **spec** (45 líneas o menos).
+- Una decisión irreversible o global se registra como **ADR**; un procedimiento, como guía en `docs/guias/`.
+- Si las secciones activas y cerradas superan 40 filas, mueve las cerradas antiguas a `ARCHIVE.md` y conserva aquí solo el resumen.
 
 ## Archivado
 
-Vacío por ahora. ARCHIVE.md aún no existe; se creará append-only cuando el índice necesite poda.
+Vacío por ahora. `ARCHIVE.md` aún no existe; se creará append-only cuando el índice necesite poda.
