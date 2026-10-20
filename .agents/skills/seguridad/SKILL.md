@@ -1,6 +1,6 @@
 ---
 name: seguridad
-description: Seguridad OWASP: auth (JWT, sesiones, RBAC), TLS, validacion, secretos, CORS, rate limiting. Usar al revisar auth, transporte, inputs, endpoints, cookies o integraciones externas.
+description: Seguridad OWASP y protección de datos: autenticación (JWT/sesiones), autorización (RBAC), TLS, validación de inputs, CORS, rate limiting, hashing (bcrypt/argon2id), PII y retención. Usar al revisar seguridad, auth o datos personales.
 ---
 
 # Seguridad
@@ -22,7 +22,7 @@ description: Seguridad OWASP: auth (JWT, sesiones, RBAC), TLS, validacion, secre
 - Con JWT: access token de vida corta + refresh token con rotacion; ambos en cookies `httpOnly` y `Secure`, nunca en localStorage (XSS).
 - Autorizacion (RBAC/ABAC) verificada server-side en cada endpoint; el frontend solo oculta opciones, nunca autoriza.
 - Cambiar o resetear la contrasena revoca sesiones y tokens activos.
-- Hashea contrasenas con bcrypt o argon2id y calibra el coste; nunca MD5, SHA-1 ni cifrado reversible. Detalle en skill `proteccion-datos`.
+- Hashea contrasenas con bcrypt o argon2id y calibra el coste; nunca MD5, SHA-1 ni cifrado reversible. Detalle en [references/PROTECCION-DATOS.md](references/PROTECCION-DATOS.md).
 - Definir expiracion y politica de renovacion por ambiente; ningun token vive para siempre.
 
 ## Seguridad en frontend
@@ -39,4 +39,4 @@ description: Seguridad OWASP: auth (JWT, sesiones, RBAC), TLS, validacion, secre
 
 En cada cambio sensible revisa autenticacion, autorizacion, control de acceso por objeto, validacion, almacenamiento de secretos y OWASP Top 10. Usa la sintaxis del framework mediante conocimiento interno; esta skill solo define controles.
 
-Politica de datos (PII, cifrado en reposo, retencion, anonimizacion, derecho al olvido, bitacora): skill `proteccion-datos`.
+Politica de datos (PII, cifrado en reposo, retencion, anonimizacion, derecho al olvido, bitacora): ver [references/PROTECCION-DATOS.md](references/PROTECCION-DATOS.md).

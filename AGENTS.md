@@ -19,25 +19,24 @@ Antes de la primera accion (y tras cada compactacion `CONTEXT_SUMMARY`): identif
 | Definir producto, alcance, MVP, roadmap o prioridades | `criterio-proyecto` | `ingenieria-software` |
 | Plan técnico, dependencias, spike/POC | `ingenieria-software` | `arquitectura` |
 | Feature multi-sesión: feature-spec en docs/features | `documentacion`, `ingenieria-software` | `criterio-proyecto`, `contexto-proyecto` |
-| Feature backend, dominio, API o jobs en background | `arquitectura`, `api-backend` | `base-datos`, `microservicios` |
+| Feature backend, dominio, API o jobs en background | `arquitectura`, `api-backend` | `base-datos` |
 | Código frontend sin cambio visual | `ui-ux` | `accesibilidad` |
 | Diseñar, crear, pulir o revisar UI visible/interactiva | `ui-ux`, `impeccable` | `accesibilidad` |
-| Medir UX con métricas (SUS, UMUX-Lite), factores de calidad ISO/IEC 25010/SQuaRE o informe de evaluación de experiencia | `evaluacion-experiencia` | `analisis-datos`, `proteccion-datos`, `ui-ux` |
+| Medir UX con métricas (SUS, UMUX-Lite), factores de calidad ISO/IEC 25010/SQuaRE o informe de evaluación de experiencia | `evaluacion-experiencia` | `analisis-datos`, `seguridad`, `ui-ux` |
 | Bug no trivial o intermitente | `debugging` | `testing`, `calidad-refactor` |
 | Refactor, deuda técnica, code smells o calidad de código | `calidad-refactor` | `testing` |
 | Escribir, revisar o correr tests | `testing` | — |
 | Esquema, migraciones o seeds | `base-datos` | `seguridad` |
 | Auth, inputs, secretos, validación o CORS | `seguridad` | `api-backend` |
-| Datos personales, retención o cumplimiento | `proteccion-datos` | `seguridad` |
+| Datos personales, retención o cumplimiento | `seguridad` | — |
 | Investigación de hechos externos o actuales | `investigacion-web` | — |
 | Analizar datasets, CSV/JSON o métricas | `analisis-datos` | — |
 | Automatizar tareas repetitivas con scripts | `automatizacion` | — |
 | Usar Notion, Playwright u otra herramienta MCP | `activacion-mcp` | — |
 | README, ADR, guía, tutorial o taller | `documentacion` | `contexto-proyecto` |
 | Onboarding de proyecto o cambio en `docs/project-brain/` | `inicio-proyecto`, `contexto-proyecto` | — |
-| Deploy, pipeline o rollback | `despliegue` | `infraestructura` |
-| Docker, Compose o editar IaC/manifiestos | `infraestructura` | `despliegue` |
-| Red, TLS, DNS o certificados | `infraestructura` | `seguridad` |
+| Deploy, pipeline, Docker o IaC | `infra-despliegue` | — |
+| Red, TLS, DNS o certificados | `infra-despliegue` | `seguridad` |
 | Medir u optimizar rendimiento | `performance` | `observabilidad`, `calidad-refactor` |
 | Instrumentar logs, métricas o trazas | `observabilidad` | `debugging` |
 | Editar `.agents/` (agentes, skills, config) | `agy-customizations` | — |
