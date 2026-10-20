@@ -20,9 +20,9 @@ Antes de la primera accion (y tras cada compactacion `CONTEXT_SUMMARY`): identif
 | Plan técnico, dependencias, spike/POC | `ingenieria-software` | `arquitectura` |
 | Feature multi-sesión: feature-spec en docs/features | `documentacion`, `ingenieria-software` | `criterio-proyecto`, `contexto-proyecto` |
 | Feature backend, dominio, API o jobs en background | `arquitectura`, `api-backend` | `base-datos`, `microservicios` |
-| Código frontend sin cambio visual | `convenciones-frontend` | `accesibilidad` |
-| Diseñar, crear, pulir o revisar UI visible/interactiva | `ui-ux`, `impeccable`, `impeccable-doctrina` | `convenciones-frontend`, `accesibilidad`, `frontend-design-review` |
-| Medir UX con métricas (SUS, UMUX-Lite), factores de calidad ISO/IEC 25010/SQuaRE o informe de evaluación de experiencia | `evaluacion-experiencia` | `analisis-datos`, `proteccion-datos`, `frontend-design-review` |
+| Código frontend sin cambio visual | `ui-ux` | `accesibilidad` |
+| Diseñar, crear, pulir o revisar UI visible/interactiva | `ui-ux`, `impeccable` | `accesibilidad` |
+| Medir UX con métricas (SUS, UMUX-Lite), factores de calidad ISO/IEC 25010/SQuaRE o informe de evaluación de experiencia | `evaluacion-experiencia` | `analisis-datos`, `proteccion-datos`, `ui-ux` |
 | Bug no trivial o intermitente | `debugging` | `testing`, `calidad-refactor` |
 | Refactor, deuda técnica, code smells o calidad de código | `calidad-refactor` | `testing` |
 | Escribir, revisar o correr tests | `testing` | — |

@@ -1,39 +1,38 @@
 ---
 name: impeccable
-description: Guía de diseño en texto para construir, rediseñar, criticar o pulir interfaces frontend (sitios, dashboards, componentes, formularios, onboarding): UX, jerarquía visual, accesibilidad, motion y theming. Usar en cualquier UI visible. No usar en backend.
+description: Guía de diseño, doctrina y playbooks UI/UX (sitios, dashboards, componentes, formularios): dirección estética, accesibilidad, motion, anti-slop visual y verificación de calidad. Usar en cualquier UI visible. No usar en backend puro.
 ---
 
-# Impeccable: guía de diseño UI/UX
+# Impeccable: guía y doctrina de diseño UI/UX
 
-Guía propia del harness, solo texto: no ejecuta binarios ni scripts. Aplícala como un director de diseño con criterio de producción. El flujo del proyecto vive en `impeccable-doctrina`.
+Combina la doctrina de diseño del proyecto, los playbooks especializados y la disciplina de ejecución anti-slop. Guía 100% en texto, sin binarios.
 
-## Principios
-- Sin medias tintas: entrega completo, con dirección clara y oficio, salvo los assets que debe poner el usuario.
-- El brief manda: respeta estéticas, fuentes y paletas fijadas aunque choquen con tus gustos.
-- Refinar preserva identidad, copy y alcance; rediseñar reemplaza el mundo visual. Nunca pulir lo descartado.
-- Verifica en pasadas acotadas: construye completo, revisa una vez (desktop y móvil juntos), corrige todo en un lote y para.
+## Principios y reglas no negociables
 
-## Setup (sin binario)
-1. Contexto: lee `PRODUCT.md` y `DESIGN.md` del proyecto si existen. Sin ellos, usa `references/init.md` (nueva superficie) u `references/new-work.md` (mundo visual nuevo o reemplazo).
-2. Carga el playbook del pedido (tabla de abajo) o `references/routing.md` si no hay comando claro.
-3. Justo antes de editar UI carga `references/craft-floor.md` (piso de calidad, prohibiciones y reflejos que ningún detector atrapa). No lo cargues para trabajo solo de planificación.
+1. **Verificación visual obligatoria**: Antes de terminar cualquier cambio de UI, haz una pasada de verificación visual contra [references/craft-floor.md](references/craft-floor.md) (piso de calidad anti-slop). Resuelve o justifica cualquier hallazgo; bloquea el cierre ante defectos graves.
+2. **Contexto primero**: Si el proyecto no tiene `PRODUCT.md` y `DESIGN.md`, propón el playbook `init` (captura contexto) antes de cambios de diseño profundos para no caer en patrones genéricos de SaaS.
+3. **El brief manda**: Respeta estéticas, fuentes y paletas fijadas en `docs/DESIGN.md`. Sin medias tintas: entrega completo, con dirección clara y oficio.
+4. **polish solo sobre features terminadas** (sin TODOs). Si el pase reestructura layout, el playbook correcto era `critique` o `layout`.
+5. **Verificación acotada**: Construye completo, revisa una vez (desktop y móvil juntos contra `craft-floor.md`), corrige en un lote y para.
 
 ## Modos (se elige por superficie, no por producto)
-- **Persuade:** landing, marketing, pricing. Ganar atención y acción.
-- **Operate:** apps, dashboards, editores, admin. Escaneabilidad y consistencia sobre expresión (`references/operate.md`).
-- **Read:** docs, artículos, guías. Estructura para comprender.
-- **Experience:** portfolios, galerías. El artefacto lidera; la interfaz se retira.
 
-## Playbooks (se piden en lenguaje natural: "aplica critique a X")
-Cada comando es `references/<comando>.md` (variante nativa: `<comando>.native.md`).
+- **Persuade:** Landing, marketing, pricing. Ganar atención y acción con ganchos claros.
+- **Operate:** Dashboards, editores, herramientas de ingeniería, admin. Densidad, escaneabilidad y consistencia sobre ornamentos ([references/operate.md](references/operate.md)).
+- **Read:** Docs, artículos, contenido. Tipografía balanceada, medida de línea a 65–75ch y wayfinding claro.
+- **Experience:** Portfolios, piezas interactivas. El artefacto lidera; la interfaz acompaña.
 
-| Grupo | Comandos |
+## Enrutamiento y Playbooks
+
+Carga el playbook específico en `references/<comando>.md` según la necesidad:
+
+| Categoría | Playbooks disponibles |
 |---|---|
-| Construir | `shape`, `init`, `document`, `extract` |
-| Evaluar | `critique` (heurístico), `audit` (técnico: a11y, perf, responsive) |
-| Refinar | `polish`, `bolder`, `quieter`, `distill`, `harden`, `onboard` |
-| Mejorar | `animate`, `colorize`, `typeset`, `layout`, `delight`, `overdrive` |
-| Corregir | `clarify`, `adapt`, `optimize` |
+| **Construir** | `shape` (brief antes de construir), `init` (captura producto en PRODUCT.md), `new-work` (crea/reemplaza mundo visual), `document`, `extract` |
+| **Evaluar** | `critique` (heurístico perceptual), `audit` (técnico: a11y, perf, responsive) |
+| **Refinar** | `polish` (acabado fino), `bolder` / `quieter` (eje de volumen visual), `distill`, `harden`, `onboard` |
+| **Mejorar** | `animate`, `colorize`, `typeset`, `layout`, `delight`, `overdrive` |
+| **Corregir** | `clarify`, `adapt`, `optimize` |
 
-Pares: `audit` → `harden`/`polish`/`optimize`; `critique` → `polish`/`distill`; `bolder` ↔ `quieter`. `polish` solo sobre features terminadas.
-Sin comando claro: lee `references/routing.md`; nunca ejecutes uno sin pedirlo. Falta `PRODUCT.md` para una superficie nueva: `init`, luego `new-work`.
+- **Pares obligatorios**: `audit` → `harden`/`polish`/`optimize`; `critique` → `polish`/`distill`; `bolder` ↔ `quieter`.
+- **Anti-slop**: Justo antes de editar o auditar UI carga siempre [references/craft-floor.md](references/craft-floor.md).

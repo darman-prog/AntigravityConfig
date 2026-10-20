@@ -41,5 +41,6 @@ Cuando ejecutes un plan numerado:
 4. Tests actualizados junto al cambio (ver skill `testing`).
 5. No crea documentacion ni archivos no pedidos; si el stack cambia, propon actualizar `AGENTS.md` o un ADR.
 6. Si cambia un contrato de API, actualiza `api-backend` o el ADR antes de cerrar.
+7. Si el cambio incluye UI visible, verificación obligatoria contra el checklist anti-slop de `impeccable/references/craft-floor.md` y `docs/DESIGN.md` (sin sopa de tarjetas idénticas, sin gradientes en texto, sin emojis por iconos, sin métricas hero genéricas; diseño intencional y estados completos). Todo hallazgo no resuelto bloquea el cierre.
 
 Adapta comandos y nombres a los scripts existentes del repositorio. No incluye tutoriales de Git ni sintaxis de testing.

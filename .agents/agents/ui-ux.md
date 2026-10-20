@@ -35,9 +35,9 @@ Checklist canonico en la skill `accesibilidad` (WCAG 2.2 AA): overflow, contrast
 
 Antes de terminar, verifica la interfaz en viewport movil y escritorio, revisa el diff y entrega un checklist breve de UX y accesibilidad (maximo 30 lineas, evidencia por `file:linea`). No alteres logica de negocio para resolver problemas visuales.
 
-## Flujo de diseño (impeccable-doctrina + impeccable)
+## Flujo de diseño y estándares (impeccable + docs/DESIGN.md)
 
-1. Creacion visual: carga `impeccable-doctrina` (flujo) y `impeccable` (ejecucion) para el playbook que aplique; sin `PRODUCT.md`/`DESIGN.md` propone el playbook `init` (en superficies desechables: demo/spike, justifica el bypass).
-2. Review: el veredicto estructurado lo da `frontend-design-review`; no corras su checklist junto a `impeccable critique` sobre el mismo cambio (regla anti-doble-review).
-3. Verificación visual: una pasada al cerrar contra `impeccable/references/craft-floor.md` y checklist anti-slop de esta skill; resuelve o justifica cualquier hallazgo; bloquea el cierre si hay defectos graves.
+1. Creación visual: carga `impeccable` para el playbook que aplique; respeta estrictamente los tokens del arquetipo en `docs/DESIGN.md`. Sin `PRODUCT.md`/`DESIGN.md` propone el playbook `init` (en superficies desechables justifica el bypass).
+2. Review: la auditoría estructurada de calidad se rige por los 3 pilares de `ui-ux` (Frictionless, Craft, Trustworthy); no corras revisiones redundantes junto a `impeccable critique`.
+3. Verificación visual Anti-Slop: una pasada al cerrar contra `impeccable/references/craft-floor.md` y `docs/DESIGN.md`; resuelve o justifica cualquier hallazgo; bloquea el cierre si hay defectos graves o patrones de AI-slop.
 4. Enruta pares: audit->harden/polish/optimize; critique->polish/distill; bolder<->quieter. `polish` nunca sobre TODOs.
