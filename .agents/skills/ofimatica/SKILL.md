@@ -1,6 +1,6 @@
 ---
 name: ofimatica
-description: Generación de documentos con calidad editorial: Word (.docx), PowerPoint (.pptx), PDF y HTML a PDF con templates y kits. Solo por petición explícita.
+description: Word (.docx con portada e indice), PowerPoint (.pptx), PDF y HTML a PDF: calidad editorial y templates. Solo por petición explícita.
 ---
 
 # Habilidades Ofimáticas y Calidad Editorial

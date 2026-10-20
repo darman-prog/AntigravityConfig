@@ -1,6 +1,6 @@
 ---
 name: infra-despliegue
-description: Infraestructura y despliegue: Dockerfile, compose, IaC, red, TLS, DNS, ambientes (dev/staging/prod), CI/CD, healthchecks y rollback. Usar al tocar Docker, infraestructura, pipelines o despliegues.
+description: Infraestructura y despliegue: Dockerfile, compose, IaC, red, TLS, DNS, cache, CDN, ambientes (dev/staging/prod), CI/CD, healthchecks y rollback. Usar al tocar Docker, infraestructura, pipelines o despliegues.
 ---
 
 # Infraestructura y Despliegue

@@ -1,6 +1,6 @@
 ---
 name: seguridad
-description: Seguridad OWASP y protección de datos: autenticación (JWT/sesiones), autorización (RBAC), TLS, validación de inputs, CORS, rate limiting, hashing (bcrypt/argon2id), PII y retención. Usar al revisar seguridad, auth o datos personales.
+description: Seguridad OWASP y protección de datos: autenticación (JWT/sesiones), autorización (RBAC), TLS, validación, CORS, rate limiting, hashing (bcrypt/argon2id), PII, retención y anonimización. Usar al revisar seguridad o datos.
 ---
 
 # Seguridad

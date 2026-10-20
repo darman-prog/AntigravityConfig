@@ -1,6 +1,6 @@
 ---
 name: impeccable
-description: Guía de diseño, doctrina y playbooks UI/UX (sitios, dashboards, componentes, formularios): dirección estética, accesibilidad, motion, anti-slop visual y verificación de calidad. Usar en cualquier UI visible. No usar en backend puro.
+description: Guía de diseño, doctrina y playbooks UI/UX: pulir dashboards, jerarquía visual, dirección estética, accesibilidad, motion y anti-slop visual. Usar en cualquier UI visible. No usar en backend puro.
 ---
 
 # Impeccable: guía y doctrina de diseño UI/UX

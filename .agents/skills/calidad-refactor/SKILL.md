@@ -1,6 +1,6 @@
 ---
 name: calidad-refactor
-description: Calidad de código y refactor seguro: principios DRY/KISS/YAGNI, SOLID aplicado, code smells, reducción de deuda técnica y patrones de refactoring con preservación de comportamiento y tests en verde. Usar al escribir, revisar o refactorizar código.
+description: Calidad de código y refactor seguro: principios DRY/KISS/YAGNI, SOLID aplicado, complejidad, code smells, preservando comportamiento y refactoring con tests en verde. Usar al escribir, revisar o refactorizar código.
 ---
 
 # Calidad de Código y Refactor Seguro

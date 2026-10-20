@@ -12,12 +12,12 @@ el detalle vive en la spec o tarjeta correspondiente, no en este índice.
 
 | Fecha | Cambio | Estado | Alcance | Registro | Evidencia |
 |---|---|---|---|---|---|
-| 2026-10-19 | Consolidación de skills a núcleo de 24 y ahorro de tokens | en-curso | Consolidación a 24 skills, estándar High-Craft y regla anti-slop | [001-consolidacion-skills-ahorro-tokens.md](001-consolidacion-skills-ahorro-tokens.md) | — |
 
 ## Cerradas
 
 | Fecha | Cambio | Estado | Alcance | Registro | Evidencia |
 |---|---|---|---|---|---|
+| 2026-10-19 | Consolidación de skills a núcleo de 29 y ahorro de tokens | cerrada | Consolidación a 29 skills, estándar High-Craft en DESIGN.md y regla anti-slop en DoD | [001-consolidacion-skills-ahorro-tokens.md](001-consolidacion-skills-ahorro-tokens.md) | `harness-budget.ps1` exit 0, commits `e18c836`..`626c2be` |
 
 ## Decisiones (ADR)
 

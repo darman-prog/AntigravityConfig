@@ -13,8 +13,8 @@
 | `MAX_DESC` | 45 palabras | `description` de una skill (es su gatillo de ruteo) |
 | `MAX_DESC_MANUAL` | 25 palabras | `description` de las 2 skills manuales |
 
-**Exentas del tope de líneas** (`MAX_SKILL_EXENTA`): `frontend-design-review` (vendor) · `habilidades-ofimaticas` e `informe-docx` (manuales). `impeccable` fue rediseñada como guía de texto propio del harness y cumple el tope estándar de ≤65 líneas con sus playbooks en `references/`.
-**Con description de 25 palabras** (`MAX_DESC_MANUAL`): `habilidades-ofimaticas` e `informe-docx`.
+**Exentas del tope de líneas** (`MAX_SKILL_EXENTA`): `ofimatica` (manual). `impeccable` y `ui-ux` cumplen el tope estándar de ≤65 líneas con sus playbooks y guías en `references/`.
+**Con description de 25 palabras** (`MAX_DESC_MANUAL`): `ofimatica`.
 
 ---
 

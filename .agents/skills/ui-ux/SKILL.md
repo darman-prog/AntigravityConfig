@@ -1,6 +1,6 @@
 ---
 name: ui-ux
-description: Diseño UI/UX, convenciones de código frontend (features/core/shared) y auditoría de diseño (pilares craft/frictionless/trustworthy, estados, responsive y accesibilidad). Usar al crear, estructurar o revisar interfaces.
+description: Diseño UI/UX y frontend: jerarquía, feedback, microinteracciones, singleton, estados, responsive, 3 pilares y auditar contra design system. Usar al crear, estructurar o revisar interfaces.
 ---
 
 # UI/UX y Convenciones Frontend

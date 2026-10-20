@@ -11,7 +11,7 @@ Plantilla de desarrollo optimizada para **Google Antigravity CLI (`agy`)**, dise
 ├── GEMINI.md                  # Orquestación del agente default y modo /plan (≤75 líneas)
 ├── .agents/
 │   ├── agents/                # 6 subagentes especializados (backend, ui-ux, etc.)
-│   ├── skills/                # 38 skills bajo demanda con guías y scripts
+│   ├── skills/                # 29 skills bajo demanda con guías y scripts
 │   └── hooks.json             # Configuración de Lifecycle Hooks (seguridad y notificaciones)
 ├── scripts/
 │   ├── harness-budget.ps1     # Guardarraíl de presupuesto y contratos (fail-closed)

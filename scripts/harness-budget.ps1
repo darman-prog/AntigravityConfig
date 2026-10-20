@@ -40,8 +40,8 @@ $MAX_RULE_BYTES   = 24000 # Tope de bytes por regla en Antigravity
 $presupuestos = Join-Path $Root "docs\harness\presupuestos.md"
 Check (Test-Path -LiteralPath $presupuestos) "falta docs\harness\presupuestos.md (fuente unica de los topes)"
 
-$EXENTAS_LINEAS = @('frontend-design-review', 'habilidades-ofimaticas', 'informe-docx')
-$MANUALES       = @('habilidades-ofimaticas', 'informe-docx')
+$EXENTAS_LINEAS = @('ofimatica')
+$MANUALES       = @('ofimatica')
 
 $agentsMd  = Join-Path $Root "AGENTS.md"
 $geminiMd  = Join-Path $Root "GEMINI.md"

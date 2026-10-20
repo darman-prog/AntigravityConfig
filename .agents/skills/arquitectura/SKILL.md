@@ -1,6 +1,6 @@
 ---
 name: arquitectura
-description: Clean Architecture, SOLID, DDD y sistemas distribuidos: capas (domain/application/adapters/infra), patrones de diseño, microservicios, Saga, Outbox y consistencia eventual. Usar al diseñar features, límites de dominio o arquitectura.
+description: Clean Architecture, SOLID y DDD: capas, patrones (pool de conexiones, proxy), microservicios, Saga, Outbox, reintentos y consistencia eventual. Usar al diseñar features o arquitectura.
 ---
 
 # Arquitectura
