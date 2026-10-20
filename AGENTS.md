@@ -43,7 +43,7 @@ Antes de la primera accion (y tras cada compactacion `CONTEXT_SUMMARY`): identif
 | Auditar el harness (skills, agentes, scripts, permisos); pre-flight con `auditor` | `agy-customizations` | `testing` |
 | Cierre de implementación o cambio | `calidad-cierre` | `testing`, `seguridad` |
 | Commits, ramas o PRs | `workflow` | — |
-| Manuales, solo por petición explícita | `habilidades-ofimaticas`, `informe-docx` | — |
+| Manuales o documentos de calidad editorial | `ofimatica` | — |
 
 Regla anti-omision: si la `description` de una skill menciona un verbo o dominio presente en la tarea, cargala aunque creas conocerla o este resumida aqui.
 
