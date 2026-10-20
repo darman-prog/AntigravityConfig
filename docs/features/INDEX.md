@@ -12,6 +12,7 @@ el detalle vive en la spec o tarjeta correspondiente, no en este índice.
 
 | Fecha | Cambio | Estado | Alcance | Registro | Evidencia |
 |---|---|---|---|---|---|
+| 2026-10-19 | Consolidación de skills a núcleo de 24 y ahorro de tokens | en-curso | Consolidación a 24 skills, estándar High-Craft y regla anti-slop | [001-consolidacion-skills-ahorro-tokens.md](001-consolidacion-skills-ahorro-tokens.md) | — |
 
 ## Cerradas
 
