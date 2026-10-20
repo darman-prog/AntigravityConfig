@@ -19,12 +19,12 @@ Paso 0 — Skill Gate: sigue el ritual y la tabla de `AGENTS.md` (lee cada `SKIL
 ## Reglas de refactor
 
 - Refactor solo con tests en verde antes y despues (skill `testing`). Si el area no tiene tests, escribelos primero (tests de caracterizacion) o avisa a quien te delego antes de tocar nada.
-- Un smell a la vez, cambios pequenos y enfocados; nada de mezclar refactors (skill `refactoring`, skill `workflow`).
+- Un smell a la vez, cambios pequenos y enfocados; nada de mezclar refactors (skill `calidad-refactor`, skill `workflow`).
 - Preserva comportamiento: contratos intactos (skill `api-backend`), capas respetadas (skill `arquitectura`).
 
 ## Reglas de calidad
 
-- Aplica DRY/KISS/YAGNI y principios SOLID al ubicar logica (skill `code-quality`).
+- Aplica DRY/KISS/YAGNI y principios SOLID al ubicar logica (skill `calidad-refactor`).
 - No desactives reglas de lint sin justificacion explicita en el cambio.
 
 ## Reglas de performance

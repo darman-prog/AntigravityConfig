@@ -23,9 +23,9 @@ Antes de la primera accion (y tras cada compactacion `CONTEXT_SUMMARY`): identif
 | Código frontend sin cambio visual | `convenciones-frontend` | `accesibilidad` |
 | Diseñar, crear, pulir o revisar UI visible/interactiva | `ui-ux`, `impeccable`, `impeccable-doctrina` | `convenciones-frontend`, `accesibilidad`, `frontend-design-review` |
 | Medir UX con métricas (SUS, UMUX-Lite), factores de calidad ISO/IEC 25010/SQuaRE o informe de evaluación de experiencia | `evaluacion-experiencia` | `analisis-datos`, `proteccion-datos`, `frontend-design-review` |
-| Bug no trivial o intermitente | `debugging` | `testing`, `code-quality` |
-| Refactor, deuda técnica, code smells o calidad de código | `refactoring`, `code-quality` | `testing` |
-| Escribir, revisar o correr tests | `testing` | `tdd` |
+| Bug no trivial o intermitente | `debugging` | `testing`, `calidad-refactor` |
+| Refactor, deuda técnica, code smells o calidad de código | `calidad-refactor` | `testing` |
+| Escribir, revisar o correr tests | `testing` | — |
 | Esquema, migraciones o seeds | `base-datos` | `seguridad` |
 | Auth, inputs, secretos, validación o CORS | `seguridad` | `api-backend` |
 | Datos personales, retención o cumplimiento | `proteccion-datos` | `seguridad` |
@@ -38,7 +38,7 @@ Antes de la primera accion (y tras cada compactacion `CONTEXT_SUMMARY`): identif
 | Deploy, pipeline o rollback | `despliegue` | `infraestructura` |
 | Docker, Compose o editar IaC/manifiestos | `infraestructura` | `despliegue` |
 | Red, TLS, DNS o certificados | `infraestructura` | `seguridad` |
-| Medir u optimizar rendimiento | `performance` | `observabilidad`, `code-quality` |
+| Medir u optimizar rendimiento | `performance` | `observabilidad`, `calidad-refactor` |
 | Instrumentar logs, métricas o trazas | `observabilidad` | `debugging` |
 | Editar `.agents/` (agentes, skills, config) | `agy-customizations` | — |
 | Auditar el harness (skills, agentes, scripts, permisos); pre-flight con `auditor` | `agy-customizations` | `testing` |

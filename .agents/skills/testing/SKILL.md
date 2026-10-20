@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Estrategia de testing: niveles unitario/integracion/E2E, que mockear, cobertura. Usar al escribir o revisar tests. No cubre Git; usa workflow.
+description: Estrategia de testing (unitario, integración, E2E, mocking) y ciclo TDD (red-green-refactor, driver/navigator). Usar al escribir, revisar o correr tests. No cubre Git; usa workflow.
 ---
 
 # Testing
@@ -26,9 +26,9 @@ Estrategia de testing separada de las convenciones Git (ver skill `workflow`).
 
 ## TDD y performance
 
-- TDD (red-green-refactor) para logica de negocio compleja y contratos; metodologia paso a paso en skill `tdd`. No es obligatorio para UI visual ni spikes de exploracion.
-- Cambios de rendimiento se verifican con benchmark antes/despues del cambio (skill `performance`); sin medicion, no hay test de performance.
-- Mocking: `stub` para datos fijos, `mock` para verificar interaccion de contrato, `spy` para observar sin reemplazar. No mockees lo que no te pertenece (librerias de terceros); envuelvelas en un adapter propio.
+- TDD (red-green-refactor) para lógica de negocio compleja y contratos; guía paso a paso y protocolo driver/navigator en [references/TDD.md](references/TDD.md). No es obligatorio para UI visual ni spikes de exploración.
+- Cambios de rendimiento se verifican con benchmark antes/después del cambio (skill `performance`); sin medición, no hay test de performance.
+- Mocking: `stub` para datos fijos, `mock` para verificar interacción de contrato, `spy` para observar sin reemplazar. No mockees lo que no te pertenece (librerías de terceros); envuélvelas en un adapter propio.
 
 ## Stack de referencia
 
