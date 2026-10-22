@@ -17,3 +17,7 @@ smokes/
 *.exe
 *.dll
 
+# Capturas visuales locales de auditoría Anti-Slop
+.visual-audit/
+
+

@@ -6,7 +6,7 @@ Plantilla base Antigravity CLI.
 Ver `.agents/` para skills y config. Si esta seccion sigue vacia al iniciar un proyecto, el agente debe preguntar el stack al usuario (flujo en skill `uso-eficiente`, seccion "Onboarding de stack") o aplicar `inicio-proyecto`.
 
 ## Comandos
-- `agy` (CLI) · `.\scripts\harness-budget.ps1` (guardarrail) · `.\scripts\new-feature.ps1` (DDR) · `.\scripts\audit-session-skills.ps1` (auditar skills en sesion)
+- `agy` (CLI) · `.\scripts\harness-budget.ps1` (guardarrail) · `.\scripts\capture-visual.ps1` (captura UI) · `.\scripts\audit-session-skills.ps1` (auditoría)
 
 ## Skill Gate (obligatorio antes de leer, buscar o editar)
 
