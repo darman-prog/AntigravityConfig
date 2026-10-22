@@ -7,6 +7,12 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+try {
+    $utf8 = [System.Text.UTF8Encoding]::new($false)
+    [Console]::OutputEncoding = $utf8
+    $OutputEncoding = $utf8
+} catch { }
+
 if (-not (Test-Path -LiteralPath $BrainRoot)) {
     Write-Host "ERROR: No existe el directorio de sesiones en $BrainRoot"
     exit 1
