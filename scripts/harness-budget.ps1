@@ -405,6 +405,12 @@ if (Test-Path -LiteralPath $styleFile) {
 $estadoDoc = Join-Path $Root "docs\harness\estado-actual.md"
 Check (Test-Path -LiteralPath $estadoDoc) "falta docs\harness\estado-actual.md (la documentacion del harness vive en docs\harness)"
 
+# 8b) El cerebro tiene un solo mapa de lectura: NAVIGATION.md; el nombre anterior no debe quedar.
+$brainNavigation = Join-Path $Root "docs\project-brain\NAVIGATION.md"
+$brainLegacy = Join-Path $Root "docs\project-brain\INDEX.md"
+Check (Test-Path -LiteralPath $brainNavigation) "falta docs\project-brain\NAVIGATION.md (mapa de lectura del cerebro)"
+Check (-not (Test-Path -LiteralPath $brainLegacy)) "docs\project-brain\INDEX.md ya no debe existir: el mapa se llama NAVIGATION.md"
+
 # 9) Lifecycle Hooks de Antigravity
 $hooksFile = Join-Path $Root ".agents\hooks.json"
 Check (Test-Path -LiteralPath $hooksFile) "falta .agents\hooks.json (Lifecycle Hooks de Antigravity)"
@@ -480,6 +486,15 @@ if (Test-Path -LiteralPath $geminiMd) { $activeScope += Get-Item -LiteralPath $g
 $activeScope = @($activeScope | Where-Object { $_.Name -ne 'harness-budget.ps1' })
 $residuos = @($activeScope | Select-String -Pattern '(\.opencode|customize-opencode|sync-global|\brtk\b|impeccable\.(exe|cmd)|\.impeccable/|serve-question|IMPECCABLE_CRITIQUE_META)' -ErrorAction SilentlyContinue)
 Check ($residuos.Count -eq 0) ("residuos de OpenCode/RTK/.impeccable detectados en archivos activos (" + $residuos.Count + "): " + (($residuos | ForEach-Object { "$($_.Filename):$($_.LineNumber)" } | Select-Object -First 5) -join ', '))
+
+# 12) Trazabilidad portable: el CLI valida backlog, expedientes y registro
+$tracePy = Join-Path $Root ".agents\skills\documentacion\scripts\trace.py"
+if ((Test-Path -LiteralPath $tracePy) -and (Get-Command python -ErrorAction SilentlyContinue)) {
+    & python $tracePy --repo $Root check | Out-Host
+    Check ($LASTEXITCODE -eq 0) "trace.py check reporta violaciones en docs\features"
+} else {
+    Write-Warning "trace.py o Python no disponibles: se omite el check de trazabilidad"
+}
 
 # Resultado
 if ($script:fail.Count -gt 0) {

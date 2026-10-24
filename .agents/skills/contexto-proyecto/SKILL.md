@@ -12,22 +12,22 @@ Memoria del proyecto en documentos pequenos cargables bajo demanda.
 
 ```text
 docs/project-brain/
-├── INDEX.md          # obligatorio: que contiene cada doc, cuando cargarlo, estado
+├── NAVIGATION.md     # obligatorio: que contiene cada doc, cuando cargarlo, estado
 ├── PRODUCT.md  DESIGN.md  ARCHITECTURE.md  DOMAIN.md
 ├── API.md  DATA.md  SECURITY.md  TESTING.md  OPERATIONS.md
 └── DECISIONS/ (ADRs NNN-titulo.md)   FLOWS/ (login.md, checkout.md, ...)
 ```
 
-Crea solo los documentos con contenido real; `INDEX.md` siempre existe.
+Crea solo los documentos con contenido real; `NAVIGATION.md` siempre existe.
 
 ## Protocolo de lectura
 
-1. Lee `docs/project-brain/INDEX.md` (30-60 lineas, siempre).
+1. Lee `docs/project-brain/NAVIGATION.md` (30-60 lineas, siempre).
 2. Carga SOLO lo relevante: UI → `DESIGN.md`+`FLOWS/`; endpoint → `API.md`+`DOMAIN.md`;
    esquema → `DATA.md`+`DOMAIN.md`; auth → `SECURITY.md`+`API.md`; arquitectura →
    `ARCHITECTURE.md`+ADRs; bug de flujo → `FLOWS/`+documento del dominio afectado.
 3. Nunca cargues el cerebro completo de golpe.
-4. Si no existe `INDEX.md` pero hay codigo, propon sembrarlo antes de seguir.
+4. Si no existe `NAVIGATION.md` pero hay codigo, propon sembrarlo antes de seguir.
 
 ## Metadata y confianza
 

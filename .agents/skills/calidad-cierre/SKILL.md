@@ -12,7 +12,7 @@ Carga esta skill al terminar una implementación o cambio, antes de cerrarlo. Es
 - Evalúa arquitectura y contratos si el cambio cruza capas, datos o API.
 - Si no hay plan (cambio pequeno pedido directo), acuerda los criterios de aceptacion con el usuario y dejalos escritos en la entrega; despues verificalos uno a uno con evidencia.
 - Orden de fuentes de criterios: (1) feature-spec vigente en `docs/features/NNN-*.md` si el cambio tiene una; (2) la entrega del plan; (3) la entrada de changelog. Al cerrar una feature-spec multi-sesion: verifica criterio a criterio contra su seccion Evidencia y dejala `cerrada`; el changelog queda como registro historico.
-- Si existe `docs/project-brain/INDEX.md`: verifica que el cambio no contradiga el cerebro (docs con `status: vigente`); si lo contradice, `BLOQUEADO` con el doc a corregir.
+- Si existe `docs/project-brain/NAVIGATION.md`: verifica que el cambio no contradiga el cerebro (docs con `status: vigente`); si lo contradice, `BLOQUEADO` con el doc a corregir.
 - En cambios UI: verifica cumplimiento de la auditoría Anti-Slop contra `impeccable/references/craft-floor.md` y `docs/DESIGN.md`; emite `BLOQUEADO` ante cualquier patrón de AI-slop no justificado.
 - Revisa edge cases según riesgo y confirma las validaciones ejecutadas o faltantes.
 - Emite exclusivamente `APROBADO` o `BLOQUEADO`, con evidencia y acción concreta.
